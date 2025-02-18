@@ -1,24 +1,25 @@
-import { Routes, Route } from 'react-router-dom';
-import { Nav } from './components/Nav.jsx'; 
-import Home from './components/Home.jsx'; 
-import About from './components/About.jsx';
-import Contact from './components/Contact.jsx'; 
-import Admin from './components/Admin.jsx'; 
-import InvoiceGenerator from './components/InvoiceGenerator.jsx';
-
+import { Routes, Route } from "react-router-dom";
+import Home from "./components/Home";
+import About from "./components/About";
+import NavBar from "./components/NavBar";
+import Contact from "./components/Contact";
+import NotFound from "./components/NotFound";
+import Admin from "./components/Admin";
+import InvoiceGenerator from "./components/InvoiceGenerator";
+import Products from "./components/Products";
 function App() {
   return (
     <>
-      <Nav />
-      <Routes>
+<NavBar />
+<Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/invoice" element={<InvoiceGenerator />} />
-
-
-      </Routes>
+        <Route path="/products" element={<Products />} />
+        <Route path="*" element={<NotFound/>} />
+</Routes>
     </>
   );
 }

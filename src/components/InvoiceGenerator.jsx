@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
-import { Document, Page } from 'react-pdf';
-import PdfGenerator from './PdfGenerator';
+import React, { useState } from "react";
+import { Document, Page, pdfjs } from "react-pdf";
+import PdfGenerator from "./PdfGenerator";
+
+// Ensure react-pdf can find the worker
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 const InvoiceGenerator = () => {
-  const [companyName, setCompanyName] = useState('Rejoice Technical Solutions');
-  const [gstNumber, setGstNumber] = useState('33EZHPS2716B1ZL');
-  const [buyerName, setBuyerName] = useState('');
-  const [buyerGST, setBuyerGST] = useState('');
-  const [invoiceNumber, setInvoiceNumber] = useState('');
-  const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().split('T')[0]);
+  const [companyName, setCompanyName] = useState("Rejoice Technical Solutions");
+  const [gstNumber, setGstNumber] = useState("33EZHPS2716B1ZL");
+  const [buyerName, setBuyerName] = useState("");
+  const [buyerGST, setBuyerGST] = useState("");
+  const [invoiceNumber, setInvoiceNumber] = useState("");
+  const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().split("T")[0]);
   const [products, setProducts] = useState([]);
   const [pdfBlob, setPdfBlob] = useState(null);
 
@@ -16,7 +19,7 @@ const InvoiceGenerator = () => {
   const handleAddProduct = () => {
     setProducts([
       ...products,
-      { description: '', hsn: '', quantity: '', rate: '', per: '', amount: 0 },
+      { description: "", hsn: "", quantity: 0, rate: 0, per: "", amount: 0 },
     ]);
   };
 
@@ -24,7 +27,7 @@ const InvoiceGenerator = () => {
   const handleProductChange = (index, field, value) => {
     const updatedProducts = [...products];
 
-    if (field === 'quantity' || field === 'rate') {
+    if (field === "quantity" || field === "rate") {
       updatedProducts[index][field] = parseFloat(value) || 0;
       updatedProducts[index].amount = updatedProducts[index].quantity * updatedProducts[index].rate;
     } else {
@@ -34,7 +37,6 @@ const InvoiceGenerator = () => {
     setProducts(updatedProducts);
   };
 
-  // Form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     const invoiceDetails = {
@@ -45,17 +47,24 @@ const InvoiceGenerator = () => {
       invoiceNumber,
       invoiceDate,
       products,
-      currentDate: new Date().toISOString().split('T')[0],
+      currentDate: new Date().toISOString().split("T")[0],
     };
-    const pdfBlob = await PdfGenerator(invoiceDetails);
-    setPdfBlob(pdfBlob);
+
+    try {
+      const pdfBlob = await PdfGenerator(invoiceDetails);
+      setPdfBlob(pdfBlob);
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">Invoice Generator</h1>
-        
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
+          Invoice Generator
+        </h1>
+
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Buyer Information */}
           <div>
@@ -114,7 +123,7 @@ const InvoiceGenerator = () => {
                 placeholder="Description"
                 className="w-full p-2 border rounded"
                 value={product.description}
-                onChange={(e) => handleProductChange(index, 'description', e.target.value)}
+                onChange={(e) => handleProductChange(index, "description", e.target.value)}
                 required
               />
 
@@ -123,7 +132,7 @@ const InvoiceGenerator = () => {
                 placeholder="HSN Code"
                 className="w-full p-2 border rounded mt-2"
                 value={product.hsn}
-                onChange={(e) => handleProductChange(index, 'hsn', e.target.value)}
+                onChange={(e) => handleProductChange(index, "hsn", e.target.value)}
               />
 
               <input
@@ -131,7 +140,7 @@ const InvoiceGenerator = () => {
                 placeholder="Quantity"
                 className="w-full p-2 border rounded mt-2"
                 value={product.quantity}
-                onChange={(e) => handleProductChange(index, 'quantity', e.target.value)}
+                onChange={(e) => handleProductChange(index, "quantity", e.target.value)}
               />
 
               <input
@@ -139,7 +148,7 @@ const InvoiceGenerator = () => {
                 placeholder="Rate"
                 className="w-full p-2 border rounded mt-2"
                 value={product.rate}
-                onChange={(e) => handleProductChange(index, 'rate', e.target.value)}
+                onChange={(e) => handleProductChange(index, "rate", e.target.value)}
               />
 
               <input
@@ -147,7 +156,7 @@ const InvoiceGenerator = () => {
                 placeholder="Per"
                 className="w-full p-2 border rounded mt-2"
                 value={product.per}
-                onChange={(e) => handleProductChange(index, 'per', e.target.value)}
+                onChange={(e) => handleProductChange(index, "per", e.target.value)}
               />
 
               <input
@@ -155,8 +164,7 @@ const InvoiceGenerator = () => {
                 placeholder="Amount"
                 className="w-full p-2 border rounded mt-2 bg-gray-100"
                 value={product.amount}
-                
-                
+                readOnly
               />
             </div>
           ))}
@@ -176,9 +184,9 @@ const InvoiceGenerator = () => {
             </Document>
             <button
               onClick={() => {
-                const link = document.createElement('a');
+                const link = document.createElement("a");
                 link.href = URL.createObjectURL(pdfBlob);
-                link.download = 'invoice.pdf';
+                link.download = "invoice.pdf";
                 link.click();
               }}
               className="mt-4 bg-purple-500 text-white py-2 px-4 rounded"
