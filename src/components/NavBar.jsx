@@ -19,27 +19,20 @@ const NavBar = () => {
 
         {/* Desktop Navigation Links */}
         <div className="hidden md:flex space-x-8">
-          <Link to="/" className="text-gray-700 hover:text-blue-500 transition duration-300">
+          <Link to="/"               className="relative text-gray-700 hover:text-blue-500 transition duration-300 after:block after:content-[''] after:absolute after:left-0 after:bottom-[-3px] after:w-full after:h-[2px] after:bg-blue-500 after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100"
+          >
             Home
           </Link>
-          <Link to="/about" className="text-gray-700 hover:text-blue-500 transition duration-300">
-            About
+          <Link to="about"               className="relative text-gray-700 hover:text-blue-500 transition duration-300 after:block after:content-[''] after:absolute after:left-0 after:bottom-[-3px] after:w-full after:h-[2px] after:bg-blue-500 after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100"
+          >            About
           </Link>
-          <Link to="/products" className="text-gray-700 hover:text-blue-500 transition duration-300">
-            Products
+          <Link to="products"               className="relative text-gray-700 hover:text-blue-500 transition duration-300 after:block after:content-[''] after:absolute after:left-0 after:bottom-[-3px] after:w-full after:h-[2px] after:bg-blue-500 after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100"
+          >            Products
           </Link>
-          <Link to="/contact" className="text-gray-700 hover:text-blue-500 transition duration-300">
-            Contact
+          <Link to="contact"               className="relative text-gray-700 hover:text-blue-500 transition duration-300 after:block after:content-[''] after:absolute after:left-0 after:bottom-[-3px] after:w-full after:h-[2px] after:bg-blue-500 after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100"
+          >            Contact
           </Link>
         </div>
-
-        {/* Login Button - Desktop */}
-        <button
-          className="hidden md:flex bg-blue-700 text-white px-5 py-2 rounded-lg flex items-center gap-2 transition-transform duration-300 hover:bg-blue-600 hover:scale-105"
-          onClick={() => navigate("/login")}
-        >
-          Login <FontAwesomeIcon icon={faUserPlus} />
-        </button>
 
         {/* Mobile Menu Button */}
         <button
@@ -50,10 +43,10 @@ const NavBar = () => {
         </button>
       </div>
 
-      {/* Mobile Dropdown Menu - Small Sized */}
+      {/* Mobile Dropdown Menu */}
       {isOpen && (
         <div className="absolute top-14 right-6 w-48 bg-white shadow-lg rounded-lg border border-gray-200">
-          {/* Close Button Inside Dropdown */}
+          {/* Close Button */}
           <div className="flex justify-end p-2">
             <button
               onClick={() => setIsOpen(false)}
@@ -93,16 +86,7 @@ const NavBar = () => {
             >
               Contact
             </Link>
-            <button
-              className="bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-transform duration-300 hover:bg-blue-600 hover:scale-105 w-full text-center"
-              onClick={() => {
-                setIsOpen(false);
-                navigate("/login");
-              }}
-            >
-              Login <FontAwesomeIcon icon={faUserPlus} />
-            </button>
-          </div>
+            </div>
         </div>
       )}
     </nav>

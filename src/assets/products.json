@@ -4,21 +4,35 @@
       "name": "Stylish Shoes",
       "description": "Comfortable and trendy shoes.",
       "image": "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp",
-      "price": "$49.99"
+      "price": "$49.99",
+      "category": "shoes"
     },
     {
       "id": 2,
       "name": "Casual Sneakers",
       "description": "Perfect for daily wear.",
-      "image": "https://img.daisyui.com/images/stock/photo-1606107557653-04a9942909ea.webp",
-      "price": "$59.99"
+      "image": "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp",
+      "price": "$59.99",
+      "category": "slippers"
+
     },
     {
       "id": 3,
       "name": "Sporty Joggers",
+      "description": "Best for running and training. lorem30",
+      "image": "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp",
+      "price": "$69.99",
+      "category": "shoes"
+
+    },
+    {
+      "id": 4,
+      "name": "Sporty Joggeasdrs",
       "description": "Best for running and training.",
       "image": "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp",
-      "price": "$69.99"
+      "price": "$69.99",
+      "category": "shoes"
+
     }
   ]
   
