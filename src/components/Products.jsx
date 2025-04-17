@@ -23,6 +23,7 @@ const Products = () => {
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [loading, setLoading] = useState(false); 
 
   const categories = [
     "All",
@@ -50,21 +51,8 @@ const Products = () => {
   };
 
   const handleSearch = (e) => {
-    const value = e.target.value;
-    setQuery(value);
-    debouncedFilterProducts(value, selectedCategory);
-  };
-
-  const openModal = (product) => {
-    setSelectedProduct(product);
-    document.body.style.overflow = "hidden"; // Disable background scrolling
-  };
-
-  const closeModal = () => {
-    setSelectedProduct(null);
-    document.body.style.overflow = "";
-    setEmail("");
-    setMobile("");
+    setQuery(e.target.value);
+    debouncedFilterProducts(e.target.value, selectedCategory);
   };
 
   const toggleExpand = (productId) => {
@@ -74,37 +62,50 @@ const Products = () => {
     }));
   };
 
+  const openModal = (product) => {
+    setSelectedProduct(product);
+  };
+
+  const closeModal = () => {
+    setSelectedProduct(null);
+    setEmail("");
+    setMobile("");
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!email || !mobile || !selectedProduct) {
       alert("Please fill all fields.");
       return;
     }
-
+  
     const templateParams = {
       user_email: email,
       user_mobile: mobile,
       product_name: selectedProduct.name,
     };
-
+  
     try {
-      await emailjs.send(
-        "service_dfnjn8d", // Replace with actual Service ID
-        "template_vwbpbi8", // Replace with actual Template ID
-        templateParams,
-        "dUDMhda0-3QM8nShA" // Replace with actual Public Key
-      );
-
+      setLoading(true);  
       closeModal();
+  
+      await emailjs.send(
+        "service_dfnjn8d", 
+        "template_vwbpbi8", 
+        templateParams,
+        "dUDMhda0-3QM8nShA" 
+      );
+  
       setShowSuccess(true);
-
       setTimeout(() => {
         setShowSuccess(false);
-      }, 3000);
+      }, 1500);
     } catch (error) {
       console.error("Error sending email:", error);
       alert("Error sending request. Please try again.");
+    } finally {
+      setLoading(false); 
     }
   };
 
@@ -113,7 +114,6 @@ const Products = () => {
       {/* Filter Section */}
       <div className="flex flex-col sm:flex-row items-center justify-between mb-4 gap-4">
         <h1 className="text-2xl font-bold">Products</h1>
-        {/* Search Bar */}
         <div className="flex justify-center items-center w-full sm:w-auto">
           <div className="relative flex items-center w-full sm:w-96">
             <input
@@ -134,7 +134,6 @@ const Products = () => {
             <FaFilter className="mr-2" />
             <span>Filter by:</span>
           </div>
-          {/* Category Filter */}
           <select
             value={selectedCategory}
             onChange={handleCategoryChange}
@@ -158,48 +157,57 @@ const Products = () => {
 
             return (
               <div
-              key={product.id}
-              className="w-full p-4 bg-white shadow-lg rounded-2xl flex flex-col"
-            >
-              <div className="w-full h-48 sm:h-64 flex items-center justify-center overflow-hidden rounded-t-xl">
-                <img
-                  className="w-full h-auto object-contain"
-                  src={product.image}
-                  alt={product.name}
-                />
-              </div>
-              <div className="p-4 flex flex-col flex-grow">
-                <h2 className="text-lg font-semibold">{product.name}</h2>
-                <p className="text-gray-600 flex-grow">
-                  {expanded[product.id] || !isLong
-                    ? product.description
-                    : words.slice(0, 30).join(" ") + "..."}
-                </p>
-                {isLong && (
-                  <p
-                    onClick={() => toggleExpand(product.id)}
-                    className="text-blue-500 cursor-pointer"
-                  >
-                    {expanded[product.id] ? "See less" : "See more..."}
+                key={product.id}
+                className="w-full p-4 bg-white shadow-lg rounded-2xl flex flex-col"
+              >
+                <div className="w-full h-48 sm:h-64 flex items-center justify-center overflow-hidden rounded-t-xl">
+                  <img
+                    className="w-full h-auto object-contain"
+                    src={product.image}
+                    alt={product.name}
+                  />
+                </div>
+                <div className="p-4 flex flex-col flex-grow">
+                  <h2 className="text-lg font-semibold">{product.name}</h2>
+                  <p className="text-gray-600 flex-grow">
+                    {expanded[product.id] || !isLong
+                      ? product.description
+                      : words.slice(0, 30).join(" ") + "..." }
                   </p>
-                )}
-                <div className="mt-auto flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                  <span className="text-blue-600 font-bold">{product.price}</span>
-                  <button
-                    onClick={() => openModal(product)}
-                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 w-full sm:w-auto mt-2 sm:mt-0"
-                  >
-                    Enquire
-                  </button>
+                  {isLong && (
+                    <p
+                      onClick={() => toggleExpand(product.id)}
+                      className="text-blue-500 cursor-pointer"
+                    >
+                      {expanded[product.id] ? "See less" : "See more..."}
+                    </p>
+                  )}
+                  <div className="mt-auto flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                    <span className="text-blue-600 font-bold">
+                      {product.price}
+                    </span>
+                    <button
+                      onClick={() => openModal(product)}
+                      className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 w-full sm:w-auto mt-2 sm:mt-0"
+                    >
+                      Enquire
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
             );
           })
         ) : (
           <p className="text-gray-500">No products found</p>
         )}
       </div>
+
+      {/* Circular Progress and Blurred Background */}
+      {loading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
 
       {/* Success Message */}
       {showSuccess && (
@@ -232,14 +240,13 @@ const Products = () => {
       {/* Modal */}
       {selectedProduct && (
         <div
-          className="fixed inset-0 flex items-center justify-center bg-opacity-50 backdrop-blur-md z-50"
+          className="fixed inset-0 flex items-center justify-center bg-opacity-50 backdrop-blur-sm z-50"
           onClick={closeModal}
         >
           <div
             className="bg-white max-h-[80vh] overflow-auto rounded-lg w-11/12 md:w-3/4 p-6 relative flex flex-col md:flex-row border-2 border-gray-200"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close Button */}
             <button
               onClick={closeModal}
               className="absolute top-4 right-4 text-gray-500 text-2xl"
@@ -247,7 +254,6 @@ const Products = () => {
               &times;
             </button>
 
-            {/* Product Image - Top on Mobile, Left on Desktop */}
             <div className="w-full md:w-1/2 p-2">
               <img
                 src={selectedProduct.image}
@@ -256,17 +262,19 @@ const Products = () => {
               />
             </div>
 
-            {/* Product Details and Form - Bottom on Mobile, Right on Desktop */}
             <div className="w-full md:w-1/2 p-2 flex flex-col justify-between">
               <div>
-                <h2 className="text-xl font-semibold">{selectedProduct.name}</h2>
-                <p className="text-gray-600 mt-2">{selectedProduct.description}</p>
+                <h2 className="text-xl font-semibold">
+                  {selectedProduct.name}
+                </h2>
+                <p className="text-gray-600 mt-2">
+                  {selectedProduct.description}
+                </p>
                 <p className="text-lg font-semibold mt-2">
                   Price: {selectedProduct.price}
                 </p>
               </div>
 
-              {/* Form */}
               <form onSubmit={handleSubmit} className="mt-4">
                 <label className="block text-sm">Email</label>
                 <input
@@ -276,34 +284,28 @@ const Products = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
-                <label className="block text-sm mt-4">Mobile Number</label>
+
+                <label className="block text-sm mt-4">Mobile</label>
                 <input
-                  type="tel"
+                  type="text"
                   className="w-full px-4 py-2 mt-2 rounded-lg border border-gray-300"
                   value={mobile}
                   onChange={(e) => setMobile(e.target.value)}
                   required
                 />
-                <div className="flex justify-end space-x-4 mt-6">
-                  <button
-                    onClick={closeModal}
-                    className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg"
-                  >
-                    Close
-                  </button>
-                  <button
-                    type="submit"
-                    className="bg-blue-500 text-white px-6 py-2 rounded-lg"
-                  >
-                    Send Request
-                  </button>
-                </div>
+
+                <button
+                  type="submit"
+                  className="w-full mt-4 px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600"
+                  disabled={loading}
+                >
+                  {loading ? "Sending..." : "Send Enquiry"}
+                </button>
               </form>
             </div>
           </div>
         </div>
       )}
-      
     </div>
   );
 };

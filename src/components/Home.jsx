@@ -106,7 +106,7 @@
     return (
       <div>
         {/* Carousel Section */}
-        <Carousel className="h-[600px]">
+        <Carousel className="h-[500px]">
           {images.map((src, index) => (
             <img
               key={index}

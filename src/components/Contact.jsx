@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import Lottie from "lottie-react";
-import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from "react-icons/fa";
+import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaWhatsapp } from "react-icons/fa";
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
+import emailjs from "@emailjs/browser";
 import contactusAnimation from "../assets/contactusanimarion.json";
 
 const Contact = () => {
@@ -11,14 +14,17 @@ const Contact = () => {
     message: "",
   });
 
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // New state for loading
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const { name, email, phone, message } = formData;
 
-    const {name, email, phone,message } = formData;
     if (!email || !phone || !message || !name) {
       alert("Please fill all fields.");
       return;
@@ -27,44 +33,45 @@ const Contact = () => {
     const templateParams = {
       user_email: email,
       user_mobile: phone,
-        user_name: name,
-        user_message : message,
+      user_name: name,
+      user_message: message,
     };
+
+    setIsLoading(true); // Show CircularProgress when submission starts
 
     try {
       await emailjs.send(
-        "service_dfnjn8d", // Replace with your actual Service ID
-        "template_vwbpbi8", // Replace with your actual Template ID
+        "service_dfnjn8d", // ✅ Replace with your actual Service ID
+        "template_vwbpbi8", // ✅ Replace with your actual Template ID
         templateParams,
-        "dUDMhda0-3QM8nShA" // Replace with your actual Public Key
+        "dUDMhda0-3QM8nShA" // ✅ Replace with your actual Public Key
       );
       setShowSuccess(true);
+      setFormData({ name: "", email: "", phone: "", message: "" });
       setTimeout(() => setShowSuccess(false), 3000);
-      alert("Message Sent Successfully!");
     } catch (error) {
       console.error("Error sending email:", error);
       alert("Error sending request. Please try again.");
+    } finally {
+      setIsLoading(false); // Hide CircularProgress after submission finishes
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Contact Section */}
       <div className="flex-1 bg-gray-100 flex items-center justify-center">
         <div className="container mx-auto flex flex-col md:flex-row w-full max-w-6xl shadow-2xl rounded-lg overflow-hidden">
-          {/* Left Animation Section */}
-          <div className="md:w-1/2 w-full flex-1 relative bg-blue-900 flex items-center justify-center p-8">
+          <div className="md:w-1/2 w-full relative bg-blue-900 flex items-center justify-center p-8">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-300 opacity-75 z-10" />
             <Lottie
               animationData={contactusAnimation}
-              loop={true}
-              autoplay={true}
+              loop
+              autoplay
               className="w-full max-w-md z-20 drop-shadow-xl"
             />
           </div>
 
-          {/* Right Form Section */}
-          <div className="md:w-1/2 w-full flex-1 flex items-center justify-center p-8 md:p-12 lg:p-20 bg-white">
+          <div className="md:w-1/2 w-full flex items-center justify-center p-8 md:p-12 lg:p-20 bg-white">
             <div className="w-full max-w-md space-y-8">
               <div className="text-center">
                 <h2 className="text-4xl font-extrabold text-gray-900 mb-3 relative pb-2">
@@ -76,6 +83,31 @@ const Contact = () => {
                 </p>
               </div>
 
+              {showSuccess && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
+                  <div className="bg-green-100 border border-green-400 text-green-700 px-6 py-4 rounded-lg shadow-lg flex items-center gap-4">
+                    <svg
+                      width="48"
+                      height="48"
+                      viewBox="0 0 48 48"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        d="M24 4C12.96 4 4 12.96 4 24C4 35.04 12.96 44 24 44C35.04 44 44 35.04 44 24C44 12.96 35.04 4 24 4ZM18.58 32.58L11.4 25.4C10.62 24.62 10.62 23.36 11.4 22.58C12.18 21.8 13.44 21.8 14.22 22.58L20 28.34L33.76 14.58C34.54 13.8 35.8 13.8 36.58 14.58C37.36 15.36 37.36 16.62 36.58 17.4L21.4 32.58C20.64 33.36 19.36 33.36 18.58 32.58Z"
+                        fill="#00BA34"
+                      />
+                    </svg>
+                    <div>
+                      <span className="font-semibold text-lg">Request Sent..!</span>
+                      <p className="text-sm">Our Team will reach you as soon as possible</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <form onSubmit={handleSubmit} className="mt-8 space-y-6">
                 <div className="space-y-4">
                   <input
@@ -84,7 +116,7 @@ const Contact = () => {
                     placeholder="Name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-200  focus:border-transparent transition-all placeholder-gray-400"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-200 placeholder-gray-400"
                     required
                   />
                   <input
@@ -93,7 +125,7 @@ const Contact = () => {
                     placeholder="Email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-200  focus:border-transparent transition-all placeholder-gray-400"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-200 placeholder-gray-400"
                     required
                   />
                   <input
@@ -102,7 +134,7 @@ const Contact = () => {
                     placeholder="Phone Number"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-200  focus:border-transparent transition-all placeholder-gray-400"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-200 placeholder-gray-400"
                     required
                   />
                   <textarea
@@ -111,78 +143,96 @@ const Contact = () => {
                     value={formData.message}
                     onChange={handleChange}
                     rows="4"
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-transparent transition-all placeholder-gray-400 resize-none"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-200 placeholder-gray-400 resize-none"
                     required
                   ></textarea>
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 shadow-lg"
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-300 hover:scale-105 shadow-lg"
                 >
                   SEND MESSAGE
                 </button>
               </form>
+
+              {/* Show CircularProgress when submitting */}
+              {isLoading && (
+                <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                  <CircularProgress />
+                </Box>
+              )}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Enhanced Footer */}
+      {/* Footer Section */}
       <footer className="bg-gray-900 text-white w-full mt-10">
         <div className="container mx-auto px-6 py-10">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            {/* Location */}
-            <div className="flex flex-col items-center text-center group">
-              <div className="mb-4 p-4 bg-gray-800 rounded-full transition-all duration-300 ">
-                <FaMapMarkerAlt className="text-3xl" />
-              </div>
-              <h4 className="text-lg font-semibold mb-2">Our Location</h4>
-              <p className="text-gray-400 text-sm">
-                24/32 1st Street Annaikadu<br />
-                Tiruppur,TamilNadu
-              </p>
-            </div>
-
-            {/* Phone */}
-            <div className="flex flex-col items-center text-center group">
-              <div className="mb-4 p-4 bg-gray-800 rounded-full transition-all duration-300 ">
-                <FaPhoneAlt className="text-3xl" />
-              </div>
-              <h4 className="text-lg font-semibold mb-2">Call Us</h4>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+            <div>
               <a
-                href="tel:+919629800900"
-                className="text-gray-400 text-sm hover:text--400 transition-colors"
+                href="https://maps.app.goo.gl/gRA8Nk5CbzfS4sut5"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col items-center text-center group hover:cursor-pointer"
               >
-                +91 9159800900
+                <div className="mb-4 p-4 bg-gray-800 rounded-full">
+                  <FaMapMarkerAlt className="text-3xl" />
+                </div>
+                <h4 className="text-lg font-semibold mb-2">Our Location</h4>
+                <p className="text-gray-400 text-sm">
+                  24/32 1st Street Annaikadu
+                  <br />
+                  Tiruppur, TamilNadu
+                </p>
               </a>
             </div>
 
-            {/* Email */}
-            <div className="flex flex-col items-center text-center group">
-              <div className="mb-4 p-4 bg-gray-800 rounded-full transition-all duration-300">
+            <div
+              className="flex flex-col items-center text-center group"
+              onClick={() => window.open("tel:+919629800900")}
+            >
+              <div className="mb-4 p-4 bg-gray-800 rounded-full">
+                <FaPhoneAlt className="text-3xl" />
+              </div>
+              <h4 className="text-lg font-semibold mb-2">Call Us</h4>
+              <div className="text-gray-400 text-sm hover:text-gray-300 transition-colors">
+                +91 9629800900
+              </div>
+            </div>
+
+            <div
+              className="flex flex-col items-center text-center group"
+              onClick={() => window.open("mailto:rtssenthiltpr@gmail.com")}
+            >
+              <div className="mb-4 p-4 bg-gray-800 rounded-full">
                 <FaEnvelope className="text-3xl" />
               </div>
               <h4 className="text-lg font-semibold mb-2">Email Us</h4>
-              <a
-                href="mailto:rtssenthiltpr@gmail.com"
-                className="text-gray-400 text-sm  transition-colors"
-              >
-rtssenthiltpr@gmail.com              </a>
+              <div className="text-gray-400 text-sm hover:text-gray-300 transition-colors">
+                rtssenthiltpr@gmail.com
+              </div>
+            </div>
+
+            <div
+              className="flex flex-col items-center text-center group"
+              onClick={() => window.open("https://wa.me/919629800900", "_blank")}
+            >
+              <div className="mb-4 p-4 bg-gray-800 rounded-full">
+                <FaWhatsapp className="text-3xl" />
+              </div>
+              <h4 className="text-lg font-semibold mb-2">WhatsApp</h4>
+              <div className="text-gray-400 text-sm hover:text-gray-300 transition-colors">
+                +91 9629800900
+              </div>
             </div>
           </div>
 
-          {/* Divider */}
           <div className="border-t border-gray-800 my-2"></div>
-
-          {/* Bottom Section */}
-          <div className="flex flex-col md:flex-row items-center justify-center
-           pt-2">
-           <aside>
-            <p>Copyright © {new Date().getFullYear()} - All right reserved by Rejoice Technical Solutions</p>
-          </aside>
-            
-            
+          <div className="flex justify-center text-sm text-gray-500 pt-4">
+            © 2025 RTS Contact Team. All rights reserved.
           </div>
         </div>
       </footer>
