@@ -4,7 +4,7 @@ import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaWhatsapp } from "react-icons/
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import emailjs from "@emailjs/browser";
-import contactusAnimation from "../assets/contactusanimarion.json";
+import contactus from "../assets/contactus.json";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -64,7 +64,7 @@ const Contact = () => {
           <div className="md:w-1/2 w-full relative bg-blue-900 flex items-center justify-center p-8">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-300 opacity-75 z-10" />
             <Lottie
-              animationData={contactusAnimation}
+              animationData={contactus}
               loop
               autoplay
               className="w-full max-w-md z-20 drop-shadow-xl"
@@ -232,7 +232,7 @@ const Contact = () => {
 
           <div className="border-t border-gray-800 my-2"></div>
           <div className="flex justify-center text-sm text-gray-500 pt-4">
-            © 2025 RTS Contact Team. All rights reserved.
+            © 2025 Rejoice Technical Solutions Contact Team. All rights reserved.
           </div>
         </div>
       </footer>
