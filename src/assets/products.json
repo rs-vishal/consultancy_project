@@ -4,9 +4,9 @@
       "name": "Rexnord Cooling Fan",
       "description": "High performance cooling fan for industrial use.",      
       "images": [
-    "src/assets/Rexnordfan1.jpg",
-    "src/assets/Rexnordfan2.jpg",
-    "src/assets/Rexnordfan3.jpg"
+    "https://i.ibb.co/7JDwmQwW/blackcurverfan1.webp",
+    "https://i.ibb.co/0V1dQsW8/blackcurverfan2.webp",
+    "https://i.ibb.co/Cpjfm42r/blackcurverfan3.webp"
       ],
       "specs": [
         { "label": "Brand", "value": "Rexnord" },
@@ -32,9 +32,9 @@
       "name": "Analog 11 Pin Electric Timer",
       "description": "Perfect for daily wear.",
       "images": [
-        "src/assets/11 Pin Electric Timer1.jpg",
-        "src/assets/11 Pin Electric Timer2.png",
-        "src/assets/11 Pin Electric Timer3.jpg"
+        "https://i.ibb.co/m5M9WyJL/11-Pin-Electric-Timer1.jpg",
+        "https://i.ibb.co/JDYjCc8/11-Pin-Electric-Timer2.png",
+        "https://i.ibb.co/h1nWHkdY/11-Pin-Electric-Timer3.jpg"
       ],
       "price": "1850",
       "category": "Timer",
@@ -54,8 +54,8 @@
       "name": "Exposing Machine",
       "description": "We have created a strong foothold in manufacturing, exporting and supplying Screen Exposure Machine. Globally recognized, P3 Machines is well equipped with latest technology machinery in order to bring out efficient production of Screen Exposure Machine. Our Screen Exposure Machine is automatically driven with digital timer with light sensor. The energy efficient Screen Exposure Machine can be purchased in different models from us.",
 "images": [
-      "src/assets/Exposingmachine1.png",
-      "src/assets/Exposingmachine2.png"
+      "https://i.ibb.co/xKGDdcVV/exposingmachine1.webp",
+      "<https://i.ibb.co/0yVpXVtS/exposingmachine2.webp"
       ],
        "price": "240000",
       "category": "Machine"
@@ -67,9 +67,9 @@
       "description": "High Pressure Mild Steel Back Curved Fan",
 "images": [
       
-  "/assets/blackcurverfan1.png",
-  "/assets/blackcurverfan2.png",
-  "/assets/blackcurverfan3.png"
+  "https://i.ibb.co/3yPttScw/Rexnordfan1.jpg",
+  "https://i.ibb.co/r2mH2vRD/Rexnordfan2.jpg",
+  "https://i.ibb.co/chKLQvfK/Rexnordfan3.jpg"
 
 
       ],
