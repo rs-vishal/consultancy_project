@@ -12,7 +12,9 @@ const Home = () => {
   const [mobile, setMobile] = useState("");
   const [expanded, setExpanded] = useState({});
   const [showSuccess, setShowSuccess] = useState(false);
-  const [currentProductIndex, setCurrentProductIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
+    const [loading, setLoading] = useState(false);
+  const [topCurrentIndex, setTopCurrentIndex] = useState(0);  
 
   const carouselimages = [
     "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?auto=format&fit=crop&w=2560&q=80",
@@ -20,30 +22,6 @@ const Home = () => {
     "https://images.unsplash.com/photo-1518623489648-a173ef7824f3?auto=format&fit=crop&w=2762&q=80",
   ];
 
-  useEffect(() => {
-    let intervalId;
-  
-    if (selectedProduct && selectedProduct.images.length > 1) {
-      let currentImageIndex = 0;
-      intervalId = setInterval(() => {
-        const carouselElement = document.getElementById("product-carousel");
-        if (carouselElement && carouselElement.children.length > 0) {
-          currentImageIndex = (currentImageIndex + 1) % selectedProduct.images.length;
-          carouselElement.children[currentImageIndex]?.scrollIntoView({ behavior: "smooth", inline: "center" });
-        }
-      }, 2000);
-    }
-  
-    return () => clearInterval(intervalId);
-  }, [selectedProduct]);
-  
-
-  const openModal = (product) => {
-    const productIndex = filteredProducts.findIndex((p) => p.id === product.id);
-    setCurrentProductIndex(productIndex);
-    setSelectedProduct(product);
-    document.body.style.overflow = "hidden";
-  };
 
   const debounce = (func, delay) => {
     let timeoutId;
@@ -75,11 +53,17 @@ const Home = () => {
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
+  const openModal = (product) => {
+    setSelectedProduct(product);
+    setCurrentIndex(0);
+    document.body.style.overflow = "hidden";
+  };
+
   const closeModal = () => {
     setSelectedProduct(null);
-    document.body.style.overflow = "";
     setEmail("");
     setMobile("");
+    document.body.style.overflow = "";
   };
 
   const handleSubmit = async (e) => {
@@ -96,31 +80,46 @@ const Home = () => {
     };
 
     try {
+      setLoading(true);
+      closeModal();
       await emailjs.send(
         "service_dfnjn8d",
         "template_vwbpbi8",
         templateParams,
         "dUDMhda0-3QM8nShA"
       );
-      closeModal();
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 1500);
     } catch (error) {
       console.error("Error sending email:", error);
       alert("Error sending request. Please try again.");
     }
+    finally {
+      setLoading(false);
+    }
   };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTopCurrentIndex(prev => (prev + 1) % carouselimages.length);
+    }, 5000); // 5 seconds
 
- 
-
+    return () => clearInterval(interval); 
+  }, [carouselimages.length]);
   return (
     <div>
       {/* Top Carousel */}
-      <Carousel className="h-[500px]">
-        {carouselimages.map((src, index) => (
-          <img key={index} src={src} alt={`Slide ${index + 1}`} className="h-full w-full object-cover" />
-        ))}
-      </Carousel>
+      <div className="h-[500px] w-full overflow-hidden relative">
+      {carouselimages.map((src, index) => (
+        <img
+          key={index}
+          src={src}
+          alt={`Slide ${index + 1}`}
+          className={`h-full w-full object-cover transition-opacity duration-1000 ${
+            index === topCurrentIndex ? "opacity-100" : "opacity-0 absolute top-0 left-0"
+          }`}
+        />
+      ))}
+    </div>
 
       {/* Search Bar */}
       <div className="flex justify-center items-center my-8">
@@ -175,6 +174,12 @@ const Home = () => {
         )}
       </div>
 
+       {/* loading screen  */}
+      {loading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
       {/* Success Modal */}
       {showSuccess && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
@@ -197,53 +202,77 @@ const Home = () => {
 
       {/* Product Modal */}
       {selectedProduct && (
-        <div
-          className="fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur z-50"
-          onClick={closeModal}
-        >
+        <div className="fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur z-50" onClick={closeModal}>
           <div
             className="bg-white w-11/12 md:w-3/4 max-h-[80vh] overflow-auto rounded-xl p-6 relative flex flex-col md:flex-row gap-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <button onClick={closeModal} className="absolute top-4 right-4 text-gray-600 text-2xl">
-              &times;
-            </button>
+            <button onClick={closeModal} className="absolute top-4 right-4 text-gray-600 text-2xl">&times;</button>
 
             {/* Image Carousel */}
-            <div className="md:w-1/2">
-              <Carousel className="rounded-lg h-72">
-                {selectedProduct.images.map((image, index) => (
-                  <img key={index} src={image} alt={selectedProduct.name} className="h-full w-full object-cover" />
+            <div className="md:w-1/2 relative">
+              <div className="relative h-72 rounded-lg overflow-hidden">
+                <img
+                  src={selectedProduct.images[currentIndex]}
+                  alt={selectedProduct.name}
+                  className="h-full w-full object-cover"
+                />
+                <button
+                  onClick={() =>
+                    setCurrentIndex((prev) =>
+                      prev === 0 ? selectedProduct.images.length - 1 : prev - 1
+                    )
+                  }
+                  className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/70 rounded-full p-2 shadow hover:bg-white"
+                >
+                  &#8592;
+                </button>
+                <button
+                  onClick={() =>
+                    setCurrentIndex((prev) =>
+                      prev === selectedProduct.images.length - 1 ? 0 : prev + 1
+                    )
+                  }
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/70 rounded-full p-2 shadow hover:bg-white"
+                >
+                  &#8594;
+                </button>
+              </div>
+
+              {/* Dots */}
+              <div className="flex justify-center gap-2 mt-2">
+                {selectedProduct.images.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`w-3 h-3 rounded-full ${
+                      index === currentIndex ? "bg-blue-500" : "bg-gray-300"
+                    }`}
+                  ></div>
                 ))}
-              </Carousel>
-              
+              </div>
             </div>
 
-            {/* Product Info and Form */}
-            <div className="md:w-1/2 flex flex-col justify-between">
-              <div>
-                <h3 className="text-xl font-bold mb-2">{selectedProduct.name}</h3>
-                <p className="text-gray-600 mb-4">{selectedProduct.description}</p>
-                <span className="text-blue-600 font-bold text-lg">{selectedProduct.price}</span>
-              </div>
-              <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-3">
+            {/* Product Info */}
+            <div className="md:w-1/2">
+              <h2 className="text-2xl font-bold">{selectedProduct.name}</h2>
+              <p className="text-gray-600 my-2">{selectedProduct.description}</p>
+              <p className="text-blue-600 text-lg font-semibold mb-4">{selectedProduct.price}</p>
+
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Your Email"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                  required
+                  className="w-full px-4 py-2 border rounded-lg"
                 />
                 <input
-                  type="tel"
+                  type="text"
                   value={mobile}
                   onChange={(e) => setMobile(e.target.value)}
                   placeholder="Your Mobile Number"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                  required
+                  className="w-full px-4 py-2 border rounded-lg"
                 />
-                
                 <div className="flex justify-end space-x-4 mt-6">
               <button
                 onClick={closeModal}

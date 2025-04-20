@@ -7,3 +7,5 @@ import daisyui from 'daisyui'
 export default defineConfig({
   plugins: [react(),tailwindcss()],
 })
+
+

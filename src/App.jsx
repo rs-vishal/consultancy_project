@@ -5,6 +5,8 @@ import NavBar from "./components/NavBar";
 import Contact from "./components/Contact";
 import NotFound from "./components/NotFound";
 import Products from "./components/Products";
+import { PrimeReactProvider } from 'primereact/api';
+
 function App() {
   return (
     <>

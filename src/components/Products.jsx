@@ -18,6 +18,8 @@ const debounce = (func, delay) => {
 const Products = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [query, setQuery] = useState("");
+    const [currentIndex, setCurrentIndex] = useState(0);
+  
   const [filteredProducts, setFilteredProducts] = useState(productsData);
   const [showSuccess, setShowSuccess] = useState(false);
   const [expanded, setExpanded] = useState({});
@@ -233,24 +235,61 @@ const Products = () => {
 
       {/* Modal */}
       {selectedProduct && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50" onClick={closeModal}>
-          <div className="bg-white max-h-[80vh] overflow-auto rounded-lg w-11/12 md:w-3/4 p-6 relative flex flex-col md:flex-row border-2 border-gray-200" onClick={(e) => e.stopPropagation()}>
-            <button onClick={closeModal} className="absolute top-4 right-4 text-gray-500 text-2xl">
-              &times;
-            </button>
+        <div className="fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur z-50" onClick={closeModal}>
+          <div
+            className="bg-white w-11/12 md:w-3/4 max-h-[80vh] overflow-auto rounded-xl p-6 relative flex flex-col md:flex-row gap-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button onClick={closeModal} className="absolute top-4 right-4 text-gray-600 text-2xl">&times;</button>
 
-            <div className="md:w-1/2">
-              <Carousel className="rounded-lg h-72">
-                {selectedProduct.images.map((image, index) => (
-                  <img key={index} src={image} alt={`Product ${index}`} className="w-full h-full object-cover" />
+            {/* Image Carousel */}
+            <div className="md:w-1/2 relative">
+              <div className="relative h-72 rounded-lg overflow-hidden">
+                <img
+                  src={selectedProduct.images[currentIndex]}
+                  alt={selectedProduct.name}
+                  className="h-full w-full object-cover"
+                />
+                <button
+                  onClick={() =>
+                    setCurrentIndex((prev) =>
+                      prev === 0 ? selectedProduct.images.length - 1 : prev - 1
+                    )
+                  }
+                  className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/70 rounded-full p-2 shadow hover:bg-white"
+                >
+                  &#8592;
+                </button>
+                <button
+                  onClick={() =>
+                    setCurrentIndex((prev) =>
+                      prev === selectedProduct.images.length - 1 ? 0 : prev + 1
+                    )
+                  }
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/70 rounded-full p-2 shadow hover:bg-white"
+                >
+                  &#8594;
+                </button>
+              </div>
+
+              {/* Dots */}
+              <div className="flex justify-center gap-2 mt-2">
+                {selectedProduct.images.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`w-3 h-3 rounded-full ${
+                      index === currentIndex ? "bg-blue-500" : "bg-gray-300"
+                    }`}
+                  ></div>
                 ))}
-              </Carousel>
+              </div>
             </div>
 
-            <div className="md:w-1/2 p-4">
-              <h2 className="text-xl font-semibold mb-2">{selectedProduct.name}</h2>
-              <p className="text-gray-700 mb-4">{selectedProduct.description}</p>
-              <p className="text-blue-600 font-bold text-lg mb-2">{selectedProduct.price}</p>
+            {/* Product Info */}
+            <div className="md:w-1/2">
+              <h2 className="text-2xl font-bold">{selectedProduct.name}</h2>
+              <p className="text-gray-600 my-2">{selectedProduct.description}</p>
+              <p className="text-blue-600 text-lg font-semibold mb-4">{selectedProduct.price}</p>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <input
@@ -258,14 +297,14 @@ const Products = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Your Email"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-2 border rounded-lg"
                 />
                 <input
-                  type="tel"
+                  type="text"
                   value={mobile}
                   onChange={(e) => setMobile(e.target.value)}
-                  placeholder="Your Mobile"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  placeholder="Your Mobile Number"
+                  className="w-full px-4 py-2 border rounded-lg"
                 />
                 <div className="flex justify-end space-x-4 mt-6">
               <button
