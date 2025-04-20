@@ -66,9 +66,12 @@
       "name": "Mild Steel Back Curved Fan",
       "description": "High Pressure Mild Steel Back Curved Fan",
 "images": [
-      "src/assets/blackcurverfan1.png",
-      "src/assets/blackcurverfan2.png",
-      "src/assets/blackcurverfan3.png"
+      
+  "/assets/blackcurverfan1.png",
+  "/assets/blackcurverfan2.png",
+  "/assets/blackcurverfan3.png"
+
+
       ],
        "specs": [
         { "label": "Capacity(m3/hr)", "value": "500" },
