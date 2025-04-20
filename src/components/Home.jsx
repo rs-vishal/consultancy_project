@@ -13,15 +13,14 @@ const Home = () => {
   const [expanded, setExpanded] = useState({});
   const [showSuccess, setShowSuccess] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-    const [loading, setLoading] = useState(false);
-  const [topCurrentIndex, setTopCurrentIndex] = useState(0);  
+  const [loading, setLoading] = useState(false);
+  const [topCurrentIndex, setTopCurrentIndex] = useState(0);
 
   const carouselimages = [
     "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?auto=format&fit=crop&w=2560&q=80",
     "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?auto=format&fit=crop&w=2940&q=80",
     "https://images.unsplash.com/photo-1518623489648-a173ef7824f3?auto=format&fit=crop&w=2762&q=80",
   ];
-
 
   const debounce = (func, delay) => {
     let timeoutId;
@@ -93,33 +92,34 @@ const Home = () => {
     } catch (error) {
       console.error("Error sending email:", error);
       alert("Error sending request. Please try again.");
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
   useEffect(() => {
     const interval = setInterval(() => {
-      setTopCurrentIndex(prev => (prev + 1) % carouselimages.length);
+      setTopCurrentIndex((prev) => (prev + 1) % carouselimages.length);
     }, 5000); // 5 seconds
 
-    return () => clearInterval(interval); 
+    return () => clearInterval(interval);
   }, [carouselimages.length]);
   return (
     <div>
       {/* Top Carousel */}
       <div className="h-[500px] w-full overflow-hidden relative">
-      {carouselimages.map((src, index) => (
-        <img
-          key={index}
-          src={src}
-          alt={`Slide ${index + 1}`}
-          className={`h-full w-full object-cover transition-opacity duration-1000 ${
-            index === topCurrentIndex ? "opacity-100" : "opacity-0 absolute top-0 left-0"
-          }`}
-        />
-      ))}
-    </div>
+        {carouselimages.map((src, index) => (
+          <img
+            key={index}
+            src={src}
+            alt={`Slide ${index + 1}`}
+            className={`h-full w-full object-cover transition-opacity duration-1000 ${
+              index === topCurrentIndex
+                ? "opacity-100"
+                : "opacity-0 absolute top-0 left-0"
+            }`}
+          />
+        ))}
+      </div>
 
       {/* Search Bar */}
       <div className="flex justify-center items-center my-8">
@@ -131,7 +131,10 @@ const Home = () => {
             placeholder="Search for anything..."
             className="w-full px-6 py-3 rounded-full bg-white/30 backdrop-blur-md shadow-lg text-gray-900 placeholder-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <AiOutlineSearch size={24} className="absolute right-3 text-gray-700" />
+          <AiOutlineSearch
+            size={24}
+            className="absolute right-3 text-gray-700"
+          />
         </div>
       </div>
 
@@ -142,22 +145,23 @@ const Home = () => {
             const words = product.description.split(" ");
             const isLong = words.length > 20;
             return (
-              <div key={product.id} className="w-full p-4 bg-white shadow-lg rounded-2xl flex flex-col">
-                <img className="w-full h-48 object-cover rounded-t-xl" src={product.images[0]} alt={product.name} />
+              <div
+                key={product.id}
+                className="w-full p-4 bg-white shadow-lg rounded-2xl flex flex-col"
+              >
+                <div className="w-full h-54 sm:h-72 md:h-80 flex items-center justify-center">
+                  <img
+                    className="max-h-full w-auto object-contain rounded-t-xl"
+                    src={product.images[0]}
+                    alt={product.name}
+                  />
+                </div>
                 <div className="p-4 flex flex-col flex-grow">
-                  <h2 className="text-lg font-semibold">{product.name}</h2>
-                  <p className="text-gray-600 flex-grow">
-                    {expanded[product.id] || !isLong
-                      ? product.description
-                      : words.slice(0, 30).join(" ") + "..."}
-                  </p>
-                  {isLong && (
-                    <p onClick={() => toggleExpand(product.id)} className="text-blue-500 cursor-pointer">
-                      {expanded[product.id] ? "See less" : "See more..."}
-                    </p>
-                  )}
+                  <h2 className="text-lg font-semibold"> {product.name}</h2>
                   <div className="mt-auto flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                    <span className="text-blue-600 font-bold">{product.price}</span>
+                    <span className="text-blue-600 font-bold">
+                      ₹ {product.price}
+                    </span>
                     <button
                       onClick={() => openModal(product)}
                       className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 w-full sm:w-auto mt-2 sm:mt-0"
@@ -174,7 +178,7 @@ const Home = () => {
         )}
       </div>
 
-       {/* loading screen  */}
+      {/* loading screen  */}
       {loading && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
           <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
@@ -194,7 +198,9 @@ const Home = () => {
             </svg>
             <div>
               <span className="font-semibold text-lg">Request Sent..!</span>
-              <p className="text-sm">Our Team will reach you as soon as possible</p>
+              <p className="text-sm">
+                Our Team will reach you as soon as possible
+              </p>
             </div>
           </div>
         </div>
@@ -202,20 +208,28 @@ const Home = () => {
 
       {/* Product Modal */}
       {selectedProduct && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur z-50" onClick={closeModal}>
+        <div
+          className="fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur z-50"
+          onClick={closeModal}
+        >
           <div
             className="bg-white w-11/12 md:w-3/4 max-h-[80vh] overflow-auto rounded-xl p-6 relative flex flex-col md:flex-row gap-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <button onClick={closeModal} className="absolute top-4 right-4 text-gray-600 text-2xl">&times;</button>
+            <button
+              onClick={closeModal}
+              className="absolute top-4 right-4 text-gray-600 text-2xl"
+            >
+              &times;
+            </button>
 
             {/* Image Carousel */}
-            <div className="md:w-1/2 relative">
-              <div className="relative h-72 rounded-lg overflow-hidden">
+            <div className="md:w-1/2 relative grid place-items-center">
+              <div className="relative w-full h-72 rounded-lg overflow-hidden">
                 <img
                   src={selectedProduct.images[currentIndex]}
                   alt={selectedProduct.name}
-                  className="h-full w-full object-cover"
+                  className="w-full h-full object-contain"
                 />
                 <button
                   onClick={() =>
@@ -255,9 +269,28 @@ const Home = () => {
             {/* Product Info */}
             <div className="md:w-1/2">
               <h2 className="text-2xl font-bold">{selectedProduct.name}</h2>
-              <p className="text-gray-600 my-2">{selectedProduct.description}</p>
-              <p className="text-blue-600 text-lg font-semibold mb-4">{selectedProduct.price}</p>
+              <p className="text-gray-600 my-2">
+                {selectedProduct.description}
+              </p>
+              <p className="text-blue-600 text-lg font-semibold mb-4">
+                ₹ {selectedProduct.price}
+              </p>
+              {selectedProduct.specs && selectedProduct.specs.length > 0 && (
 
+              <table className="w-full border-collapse">
+                <tbody>
+                  {selectedProduct.specs.map((spec, i) => (
+                    <tr key={i} className="border-b">
+                      <td className="py-2 px-4 text-gray-700 font-medium">
+                        {spec.label}
+                      </td>
+                      <td className="py-2 px-4 text-gray-600">{spec.value}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              )}
+              <div className="mt-4"></div>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <input
                   type="email"
@@ -274,19 +307,19 @@ const Home = () => {
                   className="w-full px-4 py-2 border rounded-lg"
                 />
                 <div className="flex justify-end space-x-4 mt-6">
-              <button
-                onClick={closeModal}
-                className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg"
-              >
-                Close
-              </button>
-              <button
-                type="submit"
-                className="bg-blue-500 text-white px-6 py-2 rounded-lg"
-              >
-                Send Request
-              </button>
-            </div>
+                  <button
+                    onClick={closeModal}
+                    className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg"
+                  >
+                    Close
+                  </button>
+                  <button
+                    type="submit"
+                    className="bg-blue-500 text-white px-6 py-2 rounded-lg"
+                  >
+                    Send Request
+                  </button>
+                </div>
               </form>
             </div>
           </div>

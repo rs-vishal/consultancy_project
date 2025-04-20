@@ -18,8 +18,8 @@ const debounce = (func, delay) => {
 const Products = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [query, setQuery] = useState("");
-    const [currentIndex, setCurrentIndex] = useState(0);
-  
+  const [currentIndex, setCurrentIndex] = useState(0);
+
   const [filteredProducts, setFilteredProducts] = useState(productsData);
   const [showSuccess, setShowSuccess] = useState(false);
   const [expanded, setExpanded] = useState({});
@@ -28,7 +28,10 @@ const Products = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const categories = ["All", ...new Set(productsData.map((product) => product.category))];
+  const categories = [
+    "All",
+    ...new Set(productsData.map((product) => product.category)),
+  ];
 
   const filterProducts = (searchQuery, category) => {
     const lowercasedQuery = searchQuery.toLowerCase();
@@ -122,7 +125,10 @@ const Products = () => {
             placeholder="Search for anything..."
             className="w-full px-6 py-3 rounded-full bg-white/30 backdrop-blur-md shadow-lg text-gray-900 placeholder-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <AiOutlineSearch size={24} className="absolute right-3 text-gray-700" />
+          <AiOutlineSearch
+            size={24}
+            className="absolute right-3 text-gray-700"
+          />
         </div>
         <div className="flex items-center space-x-4">
           <FaFilter />
@@ -155,44 +161,20 @@ const Products = () => {
                 key={product.id}
                 className="flex flex-col bg-white shadow-lg rounded-2xl overflow-hidden hover:shadow-xl transition-shadow duration-300"
               >
-                <div className="w-full h-48 overflow-hidden">
+                <div className="w-full h-54 sm:h-72  md:h-80 flex items-center justify-center">
                   <img
-                    className="w-full h-full object-cover"
-                    src={product.images?.[0] || "/placeholder.jpg"}
+                    className="max-h-full w-auto object-contain rounded-t-xl"
+                    src={product.images[0]}
                     alt={product.name}
                   />
                 </div>
                 <div className="p-4 flex flex-col flex-grow">
                   <h2 className="text-lg font-semibold mb-2">{product.name}</h2>
-                  <div className="flex-grow">
-                    <div className={`text-gray-600 ${!isExpanded && isLong ? "line-clamp-3" : ""}`}>
-                      {description}
-                    </div>
-                    {isLong && (
-                      <button
-                        onClick={() => toggleExpand(product.id)}
-                        className="text-blue-500 hover:text-blue-700 mt-2 text-sm font-medium flex items-center"
-                      >
-                        {isExpanded ? (
-                          <>
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                            </svg>
-                            Show less
-                          </>
-                        ) : (
-                          <>
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                            Read more
-                          </>
-                        )}
-                      </button>
-                    )}
-                  </div>
+                  
                   <div className="mt-4 flex justify-between items-center">
-                    <span className="text-blue-600 font-bold">{product.price}</span>
+                    <span className="text-blue-600 font-bold">
+                      ₹ {product.price}
+                    </span>
                     <button
                       onClick={() => openModal(product)}
                       className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors duration-200"
@@ -206,7 +188,9 @@ const Products = () => {
           })
         ) : (
           <div className="col-span-full text-center py-10">
-            <p className="text-gray-500 text-lg">No products found matching your criteria</p>
+            <p className="text-gray-500 text-lg">
+              No products found matching your criteria
+            </p>
           </div>
         )}
       </div>
@@ -222,12 +206,25 @@ const Products = () => {
       {showSuccess && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
           <div className="bg-green-100 border border-green-400 text-green-700 px-6 py-4 rounded-lg shadow-lg flex items-center gap-4">
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path fillRule="evenodd" clipRule="evenodd" d="M24 4C12.96 4 4 12.96 4 24C4 35.04 12.96 44 24 44C35.04 44 44 35.04 44 24C44 12.96 35.04 4 24 4ZM18.58 32.58L11.4 25.4C10.62 24.62 10.62 23.36 11.4 22.58C12.18 21.8 13.44 21.8 14.22 22.58L20 28.34L33.76 14.58C34.54 13.8 35.8 13.8 36.58 14.58C37.36 15.36 37.36 16.62 36.58 17.4L21.4 32.58C20.64 33.36 19.36 33.36 18.58 32.58Z" fill="#00BA34" />
+            <svg
+              width="48"
+              height="48"
+              viewBox="0 0 48 48"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fillRule="evenodd"
+                clipRule="evenodd"
+                d="M24 4C12.96 4 4 12.96 4 24C4 35.04 12.96 44 24 44C35.04 44 44 35.04 44 24C44 12.96 35.04 4 24 4ZM18.58 32.58L11.4 25.4C10.62 24.62 10.62 23.36 11.4 22.58C12.18 21.8 13.44 21.8 14.22 22.58L20 28.34L33.76 14.58C34.54 13.8 35.8 13.8 36.58 14.58C37.36 15.36 37.36 16.62 36.58 17.4L21.4 32.58C20.64 33.36 19.36 33.36 18.58 32.58Z"
+                fill="#00BA34"
+              />
             </svg>
             <div>
               <span className="font-semibold text-lg">Request Sent..!</span>
-              <p className="text-sm">Our team will reach out as soon as possible.</p>
+              <p className="text-sm">
+                Our team will reach out as soon as possible.
+              </p>
             </div>
           </div>
         </div>
@@ -235,20 +232,28 @@ const Products = () => {
 
       {/* Modal */}
       {selectedProduct && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur z-50" onClick={closeModal}>
+        <div
+          className="fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur z-50"
+          onClick={closeModal}
+        >
           <div
             className="bg-white w-11/12 md:w-3/4 max-h-[80vh] overflow-auto rounded-xl p-6 relative flex flex-col md:flex-row gap-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <button onClick={closeModal} className="absolute top-4 right-4 text-gray-600 text-2xl">&times;</button>
+            <button
+              onClick={closeModal}
+              className="absolute top-4 right-4 text-gray-600 text-2xl"
+            >
+              &times;
+            </button>
 
             {/* Image Carousel */}
-            <div className="md:w-1/2 relative">
-              <div className="relative h-72 rounded-lg overflow-hidden">
+            <div className="md:w-1/2 relative grid place-items-center">
+              <div className="relative w-full h-72 rounded-lg overflow-hidden">
                 <img
                   src={selectedProduct.images[currentIndex]}
                   alt={selectedProduct.name}
-                  className="h-full w-full object-cover"
+                  className="w-full h-full object-contain"
                 />
                 <button
                   onClick={() =>
@@ -288,9 +293,28 @@ const Products = () => {
             {/* Product Info */}
             <div className="md:w-1/2">
               <h2 className="text-2xl font-bold">{selectedProduct.name}</h2>
-              <p className="text-gray-600 my-2">{selectedProduct.description}</p>
-              <p className="text-blue-600 text-lg font-semibold mb-4">{selectedProduct.price}</p>
+              <p className="text-gray-600 my-2">
+                {selectedProduct.description}
+              </p>
+              <p className="text-blue-600 text-lg font-semibold mb-4">
+                ₹ {selectedProduct.price}
+              </p>
+              {selectedProduct.specs && selectedProduct.specs.length > 0 && (
 
+              <table className="w-full border-collapse">
+                <tbody>
+                  {selectedProduct.specs.map((spec, i) => (
+                    <tr key={i} className="border-b">
+                      <td className="py-2 px-4 text-gray-700 font-medium">
+                        {spec.label}
+                      </td>
+                      <td className="py-2 px-4 text-gray-600">{spec.value}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              )}
+              <div className="mt-4"></div>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <input
                   type="email"
@@ -307,19 +331,19 @@ const Products = () => {
                   className="w-full px-4 py-2 border rounded-lg"
                 />
                 <div className="flex justify-end space-x-4 mt-6">
-              <button
-                onClick={closeModal}
-                className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg"
-              >
-                Close
-              </button>
-              <button
-                type="submit"
-                className="bg-blue-500 text-white px-6 py-2 rounded-lg"
-              >
-                Send Request
-              </button>
-            </div>
+                  <button
+                    onClick={closeModal}
+                    className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg"
+                  >
+                    Close
+                  </button>
+                  <button
+                    type="submit"
+                    className="bg-blue-500 text-white px-6 py-2 rounded-lg"
+                  >
+                    Send Request
+                  </button>
+                </div>
               </form>
             </div>
           </div>
