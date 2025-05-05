@@ -86,6 +86,82 @@
     ],      "price": "2800",
       "category": "Fan"
 
+    },
+    {
+      "id": 5,
+      "name": "Infared Lamp",
+      "description": "Infrard Heating Lamp",
+"images": [
+      
+  "https://i.ibb.co/8n9X6MG8/infraredlamp1.png",
+  "https://i.ibb.co/M5Z4NcCK/infraredlamp2.png",
+  "https://i.ibb.co/dsZ5Yp0p/infraredlamp3.png"
+
+
+      ],
+       "specs": [
+        { "label": "Color", "value": "White" },
+        { "label": "Motor Power", "value": "Halogen Lamp" },
+        { "label": "650 mm", "value": "1200 w" }
+        
+    ],   
+       "price": "1450",
+      "category": "Lamp"
+
+    },
+    {
+      "id": 6,
+      "name": "Mild Steel Flash Curer Machine",
+      "description": "We are offering infrared flash cure dryer (for textile / garment printing). We export ir flash cure (for textile, garment printing) that is composed of auto and manual switches. Developed in line with international quality standards. Our range is acclaimed for optimum performance and durability. It has a control panel, which is operated through battery. We also provide customized solution on our range as per the specification by clients",
+"images": [
+      
+  "https://i.ibb.co/KCHLzkZ/steelflashcurermachine1.webp",
+  "https://i.ibb.co/yvm2Rq7/steelflashcurermachine2.webp",
+  "https://i.ibb.co/wrPzkQdP/steelflashcurermachine3.jpg"
+
+
+      ],
+       "specs": [
+        { "label": "Material", "value": "Mild steel" },
+        { "label": "Application", "value": "Can Be Used In Print-Flash-Print Technique, Or To Fully Cure Screen Printing Ink" },
+        { "label": "Power", "value": "5 Kw" },
+        {"label": "Automation Grade", "value": "Fully Automatic" },
+        { "label": "Frequency", "value": "60 Hz" },
+        { "label": "Voltage", "value": "320V" },
+        {"label": "Color","value":"Red(base)"}
+        
+    ],   
+       "price": "105000",
+      "category": "Machine"
+
+    },
+    {
+      "id": 7,
+      "name": "Mild Steel Solid State Relay",
+      "description": "Mild Steel Solid State Relay",
+"images": [
+      
+  "https://i.ibb.co/wxKL62W/realy2.webp",
+  "https://i.ibb.co/VYXf9FWn/relay1.webp"
+
+
+      ],
+       "specs": [
+        { "label": "Voltage Type", "value": "DC" },
+        { "label": "Parts", "value": "Relay Board" },
+        {"label": "Mounting", "value": "PCB Mounting" },
+        { "label": "Usage/Application", "value": "To Control Electrical Loads." },
+        { "label": "Phase", "value": "3 Phase" },
+        {"label": "Color","value":"Black"},
+        {"label": "Material","value":"Mild steel"},
+        {"label": "Warranty","value":"1 year"},
+        {"label": "Shape","value":"Rectangular"}
+
+        
+    ],   
+       "price": "1200",
+      "category": "Relay"
+
     }
   ]
   
