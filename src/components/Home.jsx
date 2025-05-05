@@ -3,7 +3,9 @@ import { Carousel } from "@material-tailwind/react";
 import { AiOutlineSearch } from "react-icons/ai";
 import productsData from "../assets/products.json";
 import emailjs from "@emailjs/browser";
-
+import SelectedProductModal from "./SelectedProducts";
+import Stats from "./Stats";
+import ErrorBoundary from "./ErrorBoundary";
 const Home = () => {
   const [query, setQuery] = useState("");
   const [filteredProducts, setFilteredProducts] = useState(productsData);
@@ -15,6 +17,7 @@ const Home = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [topCurrentIndex, setTopCurrentIndex] = useState(0);
+  const [enquiryStats, setEnquiryStats] = useState({});
 
   const carouselimages = [
     "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?auto=format&fit=crop&w=2560&q=80",
@@ -57,7 +60,12 @@ const Home = () => {
     setCurrentIndex(0);
     document.body.style.overflow = "hidden";
   };
-
+  const updateEnquiryStats = (category) => {
+    const stats = JSON.parse(localStorage.getItem('enquiryStats') || '{}');
+    stats[category] = (stats[category] || 0) + 1;
+    localStorage.setItem('enquiryStats', JSON.stringify(stats));
+    setEnquiryStats(stats);
+  };
   const closeModal = () => {
     setSelectedProduct(null);
     setEmail("");
@@ -65,37 +73,7 @@ const Home = () => {
     document.body.style.overflow = "";
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!email || !mobile || !selectedProduct) {
-      alert("Please fill all fields.");
-      return;
-    }
-
-    const templateParams = {
-      user_email: email,
-      user_mobile: mobile,
-      product_name: selectedProduct.name,
-    };
-
-    try {
-      setLoading(true);
-      closeModal();
-      await emailjs.send(
-        "service_dfnjn8d",
-        "template_vwbpbi8",
-        templateParams,
-        "dUDMhda0-3QM8nShA"
-      );
-      setShowSuccess(true);
-      setTimeout(() => setShowSuccess(false), 1500);
-    } catch (error) {
-      console.error("Error sending email:", error);
-      alert("Error sending request. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  
   useEffect(() => {
     const interval = setInterval(() => {
       setTopCurrentIndex((prev) => (prev + 1) % carouselimages.length);
@@ -103,6 +81,22 @@ const Home = () => {
 
     return () => clearInterval(interval);
   }, [carouselimages.length]);
+
+  useEffect(() => {
+    // Load enquiry stats from localStorage
+    const loadEnquiryStats = () => {
+      const stats = JSON.parse(localStorage.getItem('enquiryStats') || '{}');
+      setEnquiryStats(stats);
+    };
+
+    loadEnquiryStats();
+    // Add event listener for storage changes
+    window.addEventListener('storage', loadEnquiryStats);
+
+    return () => {
+      window.removeEventListener('storage', loadEnquiryStats);
+    };
+  }, []);
   return (
     <div>
       {/* Top Carousel */}
@@ -137,6 +131,9 @@ const Home = () => {
           />
         </div>
       </div>
+
+      {/* Stats component */}
+      <Stats data={enquiryStats} />
 
       {/* Product Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-4 sm:p-8">
@@ -178,155 +175,26 @@ const Home = () => {
         )}
       </div>
 
-      {/* loading screen  */}
-      {loading && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
-          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      )}
-      {/* Success Modal */}
-      {showSuccess && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
-          <div className="bg-green-100 border border-green-400 text-green-700 px-6 py-4 rounded-lg shadow-lg flex items-center gap-4">
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M24 4C12.96 4 4 12.96 4 24C4 35.04 12.96 44 24 44C35.04 44 44 35.04 44 24C44 12.96 35.04 4 24 4ZM18.58 32.58L11.4 25.4C10.62 24.62 10.62 23.36 11.4 22.58C12.18 21.8 13.44 21.8 14.22 22.58L20 28.34L33.76 14.58C34.54 13.8 35.8 13.8 36.58 14.58C37.36 15.36 37.36 16.62 36.58 17.4L21.4 32.58C20.64 33.36 19.36 33.36 18.58 32.58Z"
-                fill="#00BA34"
-              />
-            </svg>
-            <div>
-              <span className="font-semibold text-lg">Request Sent..!</span>
-              <p className="text-sm">
-                Our Team will reach you as soon as possible
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
+      
       {/* Product Modal */}
       {selectedProduct && (
-        <div
-          className="fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur z-50"
-          onClick={closeModal}
-        >
-          <div
-            className="bg-white w-11/12 md:w-3/4 max-h-[80vh] overflow-auto rounded-xl p-6 relative flex flex-col md:flex-row gap-4"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={closeModal}
-              className="absolute top-4 right-4 text-gray-600 text-2xl"
-            >
-              &times;
-            </button>
-
-            {/* Image Carousel */}
-            <div className="md:w-1/2 relative grid place-items-center">
-              <div className="relative w-full h-72 rounded-lg overflow-hidden">
-                <img
-                  src={selectedProduct.images[currentIndex]}
-                  alt={selectedProduct.name}
-                  className="w-full h-full object-contain"
-                />
-                <button
-                  onClick={() =>
-                    setCurrentIndex((prev) =>
-                      prev === 0 ? selectedProduct.images.length - 1 : prev - 1
-                    )
-                  }
-                  className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/70 rounded-full p-2 shadow hover:bg-white"
-                >
-                  &#8592;
-                </button>
-                <button
-                  onClick={() =>
-                    setCurrentIndex((prev) =>
-                      prev === selectedProduct.images.length - 1 ? 0 : prev + 1
-                    )
-                  }
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/70 rounded-full p-2 shadow hover:bg-white"
-                >
-                  &#8594;
-                </button>
-              </div>
-
-              {/* Dots */}
-              <div className="flex justify-center gap-2 mt-2">
-                {selectedProduct.images.map((_, index) => (
-                  <div
-                    key={index}
-                    className={`w-3 h-3 rounded-full ${
-                      index === currentIndex ? "bg-blue-500" : "bg-gray-300"
-                    }`}
-                  ></div>
-                ))}
-              </div>
-            </div>
-
-            {/* Product Info */}
-            <div className="md:w-1/2">
-              <h2 className="text-2xl font-bold">{selectedProduct.name}</h2>
-              <p className="text-gray-600 my-2">
-                {selectedProduct.description}
-              </p>
-              <p className="text-blue-600 text-lg font-semibold mb-4">
-                ₹ {selectedProduct.price}
-              </p>
-              {selectedProduct.specs && selectedProduct.specs.length > 0 && (
-
-              <table className="w-full border-collapse">
-                <tbody>
-                  {selectedProduct.specs.map((spec, i) => (
-                    <tr key={i} className="border-b">
-                      <td className="py-2 px-4 text-gray-700 font-medium">
-                        {spec.label}
-                      </td>
-                      <td className="py-2 px-4 text-gray-600">{spec.value}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              )}
-              <div className="mt-4"></div>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Your Email"
-                  className="w-full px-4 py-2 border rounded-lg"
-                />
-                <input
-                  type="text"
-                  value={mobile}
-                  onChange={(e) => setMobile(e.target.value)}
-                  placeholder="Your Mobile Number"
-                  className="w-full px-4 py-2 border rounded-lg"
-                />
-                <div className="flex justify-end space-x-4 mt-6">
-                  <button
-                    onClick={closeModal}
-                    className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg"
-                  >
-                    Close
-                  </button>
-                  <button
-                    type="submit"
-                    className="bg-blue-500 text-white px-6 py-2 rounded-lg"
-                  >
-                    Send Request
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
+        <ErrorBoundary>
+          <SelectedProductModal 
+            product={selectedProduct} 
+            onClose={closeModal}
+            onEnquirySubmit={updateEnquiryStats}
+          />
+        </ErrorBoundary>
       )}
     </div>
   );
 };
 
 export default Home;
+
+const updateEnquiryStats = (category) => {
+  const stats = JSON.parse(localStorage.getItem('enquiryStats') || '{}');
+  stats[category] = (stats[category] || 0) + 1;
+  localStorage.setItem('enquiryStats', JSON.stringify(stats));
+  setEnquiryStats(stats);
+};
