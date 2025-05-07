@@ -6,7 +6,7 @@ import Contact from "./components/Contact";
 import NotFound from "./components/NotFound";
 import Products from "./components/Products";
 import { PrimeReactProvider } from 'primereact/api';
-
+import Footer from "./components/Footer";
 function App() {
   return (
     <>
@@ -19,6 +19,7 @@ function App() {
         <Route path="/products" element={<Products />} />
         <Route path="*" element={<NotFound/>} />
 </Routes>
+<Footer />
     </>
   );
 }
