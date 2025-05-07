@@ -7,6 +7,8 @@ import NotFound from "./components/NotFound";
 import Products from "./components/Products";
 import { PrimeReactProvider } from 'primereact/api';
 import Footer from "./components/Footer";
+import Login from "./Pages/Login"
+import Signin from "./Pages/Signin";
 function App() {
   return (
     <>
@@ -17,6 +19,8 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/products" element={<Products />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signin" element={<Signin />} />
         <Route path="*" element={<NotFound/>} />
 </Routes>
 <Footer />
