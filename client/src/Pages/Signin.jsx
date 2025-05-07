@@ -1,10 +1,12 @@
 import React,{useState} from 'react'
 import Login from "./Login.jsx"
 const Signin = () => {
-  const [showLogin, setShowLogin] = useState(true);
+  const [showLogin, setShowLogin] = useState(false);
   return (
     <div>
-     {showLogin ?( <div className="flex flex-col lg:flex-row items-center justify-center h-screen bg-gray-100">
+     {showLogin ? (
+       <Login />
+     ) : ( <div className="flex flex-col lg:flex-row items-center justify-center h-screen bg-gray-100">
 <div className="flex h-screen">
 
   <div className="hidden lg:flex items-center justify-center flex-1 bg-white text-black">
@@ -123,13 +125,13 @@ const Signin = () => {
         </div>
       </form>
       <div className="mt-4 text-sm text-gray-600 text-center">
-        <p>Already have an account? <p className="text-black hover:underline" > Login here</p>
-        </p>
+      <p>Already have an account? <span className="text-black hover:underline cursor-pointer" onClick={() => setShowLogin(true)}> Login here</span>
+      </p>
       </div>
     </div>
   </div>
 </div>
-</div>):(<Login />)}
+</div>)}
     </div>
   )
 }
