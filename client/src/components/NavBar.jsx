@@ -1,13 +1,19 @@
-import { useState } from "react";
+import { useState ,useEffect} from "react";
 import Logo from "../assets/rts_logo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserPlus, faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
-
+import { CgProfile } from "react-icons/cg";
 const NavBar = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [h,seth]=useState(false);
+  useEffect(()=>{
+    console.log("hi");
+    seth(localStorage.getItem("token"));
 
+    localStorage.setItem("token",!localStorage.getItem("token"));
+  })
   return (
     <nav className="bg-white shadow-md py-3 fixed w-full z-50">
       <div className="container mx-auto flex items-center justify-between px-6">
@@ -32,13 +38,13 @@ const NavBar = () => {
           <Link to="contact"               className="relative text-gray-700 hover:text-blue-500 transition duration-300 after:block after:content-[''] after:absolute after:left-0 after:bottom-[-3px] after:w-full after:h-[2px] after:bg-blue-500 after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100"
           >            Contact
           </Link>
-          <Link
+          {h ?(<CgProfile />):(<Link
               to="/login"
               className="relative text-gray-700 hover:text-blue-500 transition duration-300 after:block after:content-[''] after:absolute after:left-0 after:bottom-[-3px] after:w-full after:h-[2px] after:bg-blue-500 after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100"
-              
+
             >
               Login
-            </Link>
+            </Link>)}
         </div>
 
         {/* Mobile Menu Button */}

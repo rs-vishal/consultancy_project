@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import Signin from './Signin';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -33,6 +33,7 @@ const Login = () => {
 
       window.alert(res.data.message);
       console.log(res.data.message);
+      localStorage.setItem("token","true");
       navigate('/home');
     } catch (err) {
       console.error('Error in frontend login:', err);

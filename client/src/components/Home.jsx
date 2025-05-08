@@ -4,6 +4,7 @@ import { AiOutlineSearch } from "react-icons/ai";
 import productsData from "../assets/products.json";
 import emailjs from "@emailjs/browser";
 import SelectedProductModal from "./SelectedProducts";
+
 import Stats from "./Stats";
 import ErrorBoundary from "./ErrorBoundary";
 const Home = () => {
@@ -73,7 +74,7 @@ const Home = () => {
     document.body.style.overflow = "";
   };
 
-  
+
   useEffect(() => {
     const interval = setInterval(() => {
       setTopCurrentIndex((prev) => (prev + 1) % carouselimages.length);
@@ -175,12 +176,12 @@ const Home = () => {
         )}
       </div>
 
-      
+
       {/* Product Modal */}
       {selectedProduct && (
         <ErrorBoundary>
-          <SelectedProductModal 
-            product={selectedProduct} 
+          <SelectedProductModal
+            product={selectedProduct}
             onClose={closeModal}
             onEnquirySubmit={updateEnquiryStats}
           />
