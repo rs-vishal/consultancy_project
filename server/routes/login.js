@@ -1,36 +1,33 @@
-const Model=require("../model/login");
-const express=require("express");
+const Model = require("../model/login");
+const express = require("express");
+const router = express.Router();
 
-const router=express.Router();
-router.get("/login",async (req,res)=>{
-  try{
-    const {email,password}=req.body;
-    if(!email || !password)
-    {
-      return res.status(400).json({message:"Please fill all the fields"});
-    }
-    const data=await Model.findOne({email:email});
-    if(data)
-    {
-      if(data.password===password)
-      {
-        res.status(200).json({message:"Login successful"});
-      }
-      else
-      {
-        res.status(400).json({message:"Invalid credentials"});
-      }
-    }
-    else
-    {
-      res.status(400).json({message:"User not found"});
-    }
-  }
-  catch(err)
-  {
-    console.log("Eroor in the backend login api",err);
-    res.status(404).json({message:"Error in the backend login api"});
-  }
-})
+router.post("/login", async (req, res) => {
+  try {
+    console.log(req.body); // Corrected
+    const { email, password } = req.body; // Destructuring
 
-module.exports=router;
+    if (!email || !password) {
+      return res.status(400).json({ message: "Please fill all the fields" });
+    }
+
+    const data = await Model.findOne({ email: email });
+    console.log("Data from DB", data); // Corrected
+
+    console.log(data.password==password); // Corrected
+
+      if (data.password ==password) {
+        console.log("Password from DB", data.password); // Corrected
+        console.log("Password from request", password);
+        return res.status(200).json({ message: "Login successful" });
+      } else {
+        return res.status(400).json({ message: "Invalid credentials" });
+      }
+
+  } catch (err) {
+    console.log("Error in the backend login API", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+module.exports = router;

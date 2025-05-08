@@ -1,13 +1,49 @@
-import React,{useState} from 'react'
-//import {useNavigate} from "react-router-dom";
+import React, { useState } from 'react';
 import Signin from './Signin';
-const Login = () => {
-  const[showsignup,setSignup]=useState(true);
-  //const navigate=useNavigate();
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
+const Login = () => {
+  const [showSignup, setShowSignup] = useState(true);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  // Handle input changes
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData({
+      ...formData,
+      [id]: value
+    });
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const res = await axios.post('http://localhost:4000/api/login', {
+        email: formData.email,
+        password: formData.password
+      });
+
+      window.alert(res.data.message);
+      console.log(res.data.message);
+      navigate('/home');
+    } catch (err) {
+      console.error('Error in frontend login:', err);
+      window.alert('Login failed. Please check your credentials.');
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div>
-      {showsignup?(
+      {showSignup ?  (
       <div className="flex flex-col lg:flex-row items-center justify-center h-screen bg-gray-100">
 <div className="flex h-screen">
   <div className="hidden lg:flex items-center justify-center flex-1 bg-white text-black">
@@ -106,25 +142,25 @@ const Login = () => {
       <div className="mt-4 text-sm text-gray-600 text-center">
         <p>or with email</p>
       </div>
-      <form action="#" method="POST" className="space-y-4">
+      <form className="space-y-4" onSubmit={handleLogin}>
         {/* <div>
           <label for="username" className="block text-sm font-medium text-gray-700">Username</label>
           <input type="text" id="username" name="username" className="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"></input>
         </div> */}
         <div>
           <label for="email" className="block text-sm font-medium text-gray-700">Email</label>
-          <input type="text" id="email" name="email" className="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"></input>
+          <input type="text" id="email" name="email" className="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300" value={formData.email} onChange={handleChange}></input>
         </div>
         <div>
           <label for="password" className="block text-sm font-medium text-gray-700">Password</label>
-          <input type="password" id="password" name="password" className="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"></input>
+          <input type="password" id="password" name="password" className="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"   value={formData.password} onChange={handleChange}></input>
         </div>
         <div>
-          <button type="submit" className="w-full bg-black text-white p-2 rounded-md hover:bg-gray-800 focus:outline-none focus:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300">Login</button>
+          <button type="submit" className="w-full bg-black text-white p-2 rounded-md hover:bg-gray-800 focus:outline-none focus:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300" >Login</button>
         </div>
       </form>
       <div className="mt-4 text-sm text-gray-600 text-center">
-        <p>Dont have an account? <span className="text-black hover:underline" onClick={()=>setSignup(false)}>Sign Up here</span>
+        <p>Dont have an account? <span className="text-black hover:underline" onClick={()=>setShowSignup(false)}>Sign Up here</span>
         </p>
       </div>
     </div>
