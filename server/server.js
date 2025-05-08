@@ -8,6 +8,10 @@ const connectDb=require("./config/db")
 connectDb();
 const rote=require("./routes/route");
 app.use("/api",rote);
+const login=require("./routes/login");
+app.use("/api",login);
+const signup=require("./routes/signup");
+app.use("/api",signup);
 app.listen(4000 ,()=>{
   console.log("Server is running in the port",process.env.PORT );
 })
