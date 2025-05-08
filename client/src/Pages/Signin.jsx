@@ -1,8 +1,41 @@
-import React,{useState} from 'react'
-import Login from "./Login.jsx"
+import React, { useState } from 'react';
+import Login from "./Login.jsx";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 const Signin = () => {
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: ''
+  });
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData({
+      ...formData,
+      [id]: value
+    });
+  };
+
   const [showLogin, setShowLogin] = useState(false);
+
+  const handleSignIN = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("http://localhost:4000/api/signup", formData);
+      console.log(response.data);
+      window.alert("User added successfully");
+      setShowLogin(true); // Optionally go to login
+      // or use: navigate("/login");
+    } catch (err) {
+      window.alert("Error in adding the user: " + err.message);
+    }
+  };
   return (
+
     <div>
      {showLogin ? (
        <Login />
@@ -106,24 +139,49 @@ const Signin = () => {
       <div className="mt-4 text-sm text-gray-600 text-center">
         <p>or with email</p>
       </div>
-      <form action="#" method="POST" className="space-y-4">
-
-        <div>
-          <label for="username" className="block text-sm font-medium text-gray-700">Username</label>
-          <input type="text" id="username" name="username" className="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"></input>
-        </div>
-        <div>
-          <label for="email" className="block text-sm font-medium text-gray-700">Email</label>
-          <input type="text" id="email" name="email" className="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"></input>
-        </div>
-        <div>
-          <label for="password" className="block text-sm font-medium text-gray-700">Password</label>
-          <input type="password" id="password" name="password" className="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"></input>
-        </div>
-        <div>
-          <button type="submit" className="w-full bg-black text-white p-2 rounded-md hover:bg-gray-800 focus:outline-none focus:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300">Sign Up</button>
-        </div>
-      </form>
+      <form onSubmit={handleSignIN} className="bg-white p-6 rounded-lg shadow-lg space-y-4 w-96">
+            <h2 className="text-2xl font-semibold">Sign Up</h2>
+            <input
+              type="text"
+              id="name"
+              placeholder="Name"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full p-2 border border-gray-300 rounded"
+              required
+            />
+            <input
+              type="email"
+              id="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full p-2 border border-gray-300 rounded"
+              required
+            />
+            <input
+              type="password"
+              id="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full p-2 border border-gray-300 rounded"
+              required
+            />
+            <button type="submit" className="w-full bg-black text-white p-2 rounded hover:bg-gray-600">
+              Sign Up
+            </button>
+            <p className="text-sm text-center">
+              Already have an account?{' '}
+              <button
+                type="button"
+                onClick={() => setShowLogin(true)}
+                className="text-blue-500 hover:underline"
+              >
+                Login
+              </button>
+            </p>
+          </form>
       <div className="mt-4 text-sm text-gray-600 text-center">
       <p>Already have an account? <span className="text-black hover:underline cursor-pointer" onClick={() => setShowLogin(true)}> Login here</span>
       </p>

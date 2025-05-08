@@ -38,7 +38,7 @@ const NavBar = () => {
           <Link to="contact"               className="relative text-gray-700 hover:text-blue-500 transition duration-300 after:block after:content-[''] after:absolute after:left-0 after:bottom-[-3px] after:w-full after:h-[2px] after:bg-blue-500 after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100"
           >            Contact
           </Link>
-          {h ?(<CgProfile />):(<Link
+          {h ?(<Link  to="/login"><CgProfile size={20} /></Link>):(<Link
               to="/login"
               className="relative text-gray-700 hover:text-blue-500 transition duration-300 after:block after:content-[''] after:absolute after:left-0 after:bottom-[-3px] after:w-full after:h-[2px] after:bg-blue-500 after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100"
 
