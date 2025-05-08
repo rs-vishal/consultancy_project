@@ -7,7 +7,7 @@ app.use(express.json());
 const connectDb=require("./config/db")
 connectDb();
 const rote=require("./routes/route");
-app.use("/api",rote);
+app.use("/api/contact",rote);
 const login=require("./routes/login");
 app.use("/api",login);
 const signup=require("./routes/signup");

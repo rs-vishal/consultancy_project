@@ -9,6 +9,7 @@ import { PrimeReactProvider } from 'primereact/api';
 import Footer from "./components/Footer";
 import Login from "./Pages/Login"
 import Signin from "./Pages/Signin";
+import DashBoard from "./admin/DashBoard";
 function App() {
   return (
     <>
@@ -23,6 +24,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signin" element={<Signin />} />
         <Route path="*" element={<NotFound/>} />
+        <Route path="/admin" element={<DashBoard />} />
 </Routes>
 <Footer />
     </>

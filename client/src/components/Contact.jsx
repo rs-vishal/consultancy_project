@@ -26,7 +26,7 @@ const Contact = () => {
     const { name, email, phone, message } = formData;
     console.log("Form Data:", formData);
     try {
-     const res= axios.post("http://localhost:4000/api/add",formData);
+     const res= axios.post("http://localhost:4000/api/contact/add",formData);
       console.log("Data in the backend",res);
 
     } catch (err) {
