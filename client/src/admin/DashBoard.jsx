@@ -1,6 +1,6 @@
 import React ,{useState,useEffect} from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import axios from "axios"
+import axios from "axiosx"
 const productData = [
   { name: 'Rexnord Cooling Fan', sold: 	180 },
   { name: "Analog 11 Pin Electric Timer", sold: 150 },
