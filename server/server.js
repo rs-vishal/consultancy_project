@@ -12,6 +12,8 @@ const login=require("./routes/login");
 app.use("/api",login);
 const signup=require("./routes/signup");
 app.use("/api",signup);
+const stats=require("./routes/stats");
+app.use("/api",stats);
 app.listen(4000 ,()=>{
   console.log("Server is running in the port",process.env.PORT );
 })

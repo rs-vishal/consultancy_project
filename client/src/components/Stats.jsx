@@ -15,60 +15,51 @@ import {
   Line
 } from "recharts";
 
-const Stats = () => {
-  const [data] = useState({
-    "Web Development": 45,
-    "Data Science": 30,
-    "AI & ML": 25,
-    "Cybersecurity": 15,
-    "Cloud Computing": 35,
-    "DevOps": 20
-  });
+// Predefined color palette
+const initialColors = [
+  "#4f46e5", "#10b981", "#f59e0b", "#ef4444", "#6366f1", "#14b8a6", "#eab308", "#8b5cf6"
+];
 
+// Generate a single random hex color
+const getRandomColor = () =>
+  `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, "0")}`;
+
+const Stats = ({ data }) => {
   const [chartType, setChartType] = useState("bar");
 
-  const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899"];
+  // Memoize color array extension based on number of categories
+  const colors = useMemo(() => {
+    const extra = Object.keys(data).length - initialColors.length;
+    const additionalColors = Array.from({ length: Math.max(0, extra) }, getRandomColor);
+    return [...initialColors, ...additionalColors];
+  }, [data]);
 
   const chartData = useMemo(() => {
-    if (!data || Object.keys(data).length === 0) return [];
-
-    const allCategories = [...new Set(Object.keys(data))];
-    return allCategories
-      .map((category) => ({
-        name: category,
-        enquiries: data[category] || 0
-      }))
-      .sort((a, b) => b.enquiries - a.enquiries);
-  }, [data]);
+    return Object.entries(data).map(([name, enquiries], index) => ({
+      name,
+      enquiries,
+      color: colors[index] || getRandomColor(), 
+    })).sort((a, b) => b.enquiries - a.enquiries);
+  }, [data, colors]);
 
   const totalEnquiries = useMemo(() => {
     return chartData.reduce((sum, item) => sum + item.enquiries, 0);
   }, [chartData]);
 
-  if (chartData.length === 0) {
-    return (
-      <div className="w-full h-64 flex items-center justify-center bg-white rounded-lg shadow-lg">
-        <div className="text-center p-6">
-          <h3 className="text-xl font-semibold text-gray-700">No Data Available</h3>
-          <p className="text-gray-500 mt-2">There are no inquiries to display at this time.</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="w-full bg-white rounded-lg shadow-lg p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold">Inquiry Statistics</h2>
-        <div className="flex items-center space-x-2">
+    <div className="w-full bg-white rounded-lg shadow p-4 sm:p-6 md:p-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+        <h2 className="text-lg sm:text-xl font-semibold">Inquiry Statistics</h2>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
           <span className="text-sm text-gray-500">Total: {totalEnquiries} Inquiries</span>
-          <div className="border-l border-gray-300 h-6 mx-2"></div>
-          <div className="flex bg-gray-100 rounded-md p-1">
+          <div className="flex bg-gray-100 rounded-md p-1 mt-1 sm:mt-0">
             {["bar", "pie", "line"].map((type) => (
               <button
                 key={type}
                 onClick={() => setChartType(type)}
-                className={`px-3 py-1 text-sm rounded-md ${chartType === type ? "bg-blue-500 text-white" : "text-gray-700"}`}
+                className={`px-3 py-1 text-sm rounded-md ${
+                  chartType === type ? "bg-blue-500 text-white" : "text-gray-700"
+                }`}
               >
                 {type.charAt(0).toUpperCase() + type.slice(1)}
               </button>
@@ -77,16 +68,26 @@ const Stats = () => {
         </div>
       </div>
 
-      <div className="w-full h-80">
+      <div className="w-full h-[300px] sm:h-[400px]">
         <ResponsiveContainer width="100%" height="100%">
           {chartType === "bar" && (
-            <BarChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 20 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-              <XAxis dataKey="name" tick={{ fill: '#666' }} angle={-45} textAnchor="end" height={60} />
-              <YAxis tick={{ fill: '#666' }} allowDecimals={false} domain={[0, 'auto']} />
-              <Tooltip formatter={(value) => [`${value} Inquiries`, '']} />
+            <BarChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 50 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis
+                dataKey="name"
+                angle={-35}
+                textAnchor="end"
+                height={60}
+                interval={0}
+              />
+              <YAxis allowDecimals={false} />
+              <Tooltip />
               <Legend />
-              <Bar dataKey="enquiries" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="enquiries">
+                {chartData.map((entry, index) => (
+                  <Cell key={`bar-${index}`} fill={entry.color} />
+                ))}
+              </Bar>
             </BarChart>
           )}
 
@@ -97,13 +98,14 @@ const Stats = () => {
                 cx="50%"
                 cy="50%"
                 outerRadius={120}
-                fill="#8884d8"
                 dataKey="enquiries"
                 nameKey="name"
-                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                label={({ name, percent }) =>
+                  `${name}: ${(percent * 100).toFixed(0)}%`
+                }
               >
                 {chartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell key={`pie-${index}`} fill={entry.color} />
                 ))}
               </Pie>
               <Tooltip />
@@ -112,35 +114,41 @@ const Stats = () => {
           )}
 
           {chartType === "line" && (
-            <LineChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 20 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-              <XAxis dataKey="name" tick={{ fill: '#666' }} angle={-45} textAnchor="end" height={60} />
-              <YAxis tick={{ fill: '#666' }} allowDecimals={false} domain={[0, 'auto']} />
-              <Tooltip formatter={(value) => [`${value} Inquiries`, '']} />
+            <LineChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 50 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis
+                dataKey="name"
+                angle={-35}
+                textAnchor="end"
+                height={60}
+                interval={0}
+              />
+              <YAxis allowDecimals={false} />
+              <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="enquiries" stroke="#3b82f6" strokeWidth={2} activeDot={{ r: 8 }} />
+              <Line type="monotone" dataKey="enquiries" stroke="#3b82f6" strokeWidth={2} />
             </LineChart>
           )}
         </ResponsiveContainer>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-6">
         <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
           <h3 className="text-sm font-medium text-gray-500">Total Inquiries</h3>
-          <p className="text-2xl font-bold text-gray-800">{totalEnquiries}</p>
+          <p className="text-xl font-bold text-gray-800">{totalEnquiries}</p>
         </div>
         <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
           <h3 className="text-sm font-medium text-gray-500">Most Popular</h3>
-          <p className="text-2xl font-bold text-gray-800">
-            {chartData.length > 0 ? chartData[0].name : 'N/A'}
+          <p className="text-xl font-bold text-gray-800">
+            {chartData.length > 0 ? chartData[0].name : "N/A"}
           </p>
           <p className="text-sm text-gray-500">
-            {chartData.length > 0 ? `${chartData[0].enquiries} inquiries` : ''}
+            {chartData.length > 0 ? `${chartData[0].enquiries} inquiries` : ""}
           </p>
         </div>
         <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
           <h3 className="text-sm font-medium text-gray-500">Categories</h3>
-          <p className="text-2xl font-bold text-gray-800">{chartData.length}</p>
+          <p className="text-xl font-bold text-gray-800">{chartData.length}</p>
         </div>
       </div>
     </div>
@@ -148,3 +156,4 @@ const Stats = () => {
 };
 
 export default Stats;
+

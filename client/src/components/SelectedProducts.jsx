@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import emailjs from "@emailjs/browser";
 
 const SelectedProductModal = ({ product, onClose, onEnquirySubmit }) => {
-  // Move useState declarations before the null check
+  // State variables for form input and errors
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
   const [loading, setLoading] = useState(false);
@@ -11,8 +11,8 @@ const SelectedProductModal = ({ product, onClose, onEnquirySubmit }) => {
   const [emailError, setEmailError] = useState("");
   const [mobileError, setMobileError] = useState("");
 
-  // Add null check after state declarations
-  if (!product || !product.images || !product.specs) {
+  // Add null check to ensure product exists
+  if (!product || !product.images) {
     return (
       <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
         <div className="bg-white rounded-lg p-4 text-center">
@@ -28,6 +28,7 @@ const SelectedProductModal = ({ product, onClose, onEnquirySubmit }) => {
     );
   }
 
+  // Form submission handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     setEmailError("");
@@ -38,6 +39,7 @@ const SelectedProductModal = ({ product, onClose, onEnquirySubmit }) => {
     const phoneRegex = /^[6-9]\d{9}$/;
     let hasError = false;
 
+    // Email validation
     if (!email) {
       setEmailError("Email is required.");
       hasError = true;
@@ -46,6 +48,7 @@ const SelectedProductModal = ({ product, onClose, onEnquirySubmit }) => {
       hasError = true;
     }
 
+    // Mobile number validation
     if (!mobile) {
       setMobileError("Mobile number is required.");
       hasError = true;
@@ -65,16 +68,41 @@ const SelectedProductModal = ({ product, onClose, onEnquirySubmit }) => {
     setLoading(true);
 
     try {
+      // Send email using emailjs
       await emailjs.send(
         "service_dfnjn8d",
         "template_vwbpbi8",
         templateParams,
         "dUDMhda0-3QM8nShA"
       );
-      
-      // Call the passed function instead of directly updating localStorage
-      onEnquirySubmit(product.category);
-      
+
+      // Update enquiry stats with customer details
+      try {
+        const res = await fetch("http://localhost:4000/api/post_no_of_enquiry", { // Changed port to 4000
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ 
+            category: product.category,
+            email: email,
+            mobile: mobile
+          }),
+        });
+
+        if (!res.ok) throw new Error("Failed to update enquiry");
+
+        const statsRes = await fetch("http://localhost:4000/api/get_no_of_enquiry"); // Changed port to 4000
+        const statsData = await statsRes.json();
+        const formattedStats = statsData.reduce((acc, curr) => {
+          acc[curr.category] = curr.count;
+          return acc;
+        }, {});
+      } catch (error) {
+        console.error("Error updating enquiry:", error);
+      }
+
+      // Show success message
       setShowSuccess(true);
       setEmail("");
       setMobile("");
@@ -88,6 +116,7 @@ const SelectedProductModal = ({ product, onClose, onEnquirySubmit }) => {
     }
   };
 
+  // Swipe functionality for image carousel
   const touchStartX = useRef(null);
   const touchEndX = useRef(null);
 
@@ -127,11 +156,11 @@ const SelectedProductModal = ({ product, onClose, onEnquirySubmit }) => {
     <>
       {loading && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
-        <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-      </div>
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
       )}
 
-       {showSuccess && (
+      {showSuccess && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
           <div className="bg-green-100 border border-green-400 text-green-700 px-6 py-4 rounded-lg shadow-lg flex items-center gap-4">
             <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
@@ -195,18 +224,23 @@ const SelectedProductModal = ({ product, onClose, onEnquirySubmit }) => {
               <h2 className="text-2xl font-semibold mb-2">{product.name}</h2>
               <p className="mb-4 text-gray-700">{product.description}</p>
 
-              <div className="max-h-48 overflow-y-auto border border-gray-200 rounded mb-4">
-                <table className="w-full text-sm">
-                  <tbody>
-                    {product.specs.map((spec, idx) => (
-                      <tr key={idx} className="border-t">
-                        <td className="p-2 font-medium bg-gray-50">{spec.label}</td>
-                        <td className="p-2">{spec.value}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              {/* Check if product.specs exists and render it conditionally */}
+              {product.specs && product.specs.length > 0 ? (
+                <div className="max-h-48 overflow-y-auto border border-gray-200 rounded mb-4">
+                  <table className="w-full text-sm">
+                    <tbody>
+                      {product.specs.map((spec, idx) => (
+                        <tr key={idx} className="border-t">
+                          <td className="p-2 font-medium bg-gray-50">{spec.label}</td>
+                          <td className="p-2">{spec.value}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="text-gray-500">No specifications available for this product.</p>
+              )}
 
               <form onSubmit={handleSubmit} className="space-y-3">
                 <div>
@@ -217,56 +251,30 @@ const SelectedProductModal = ({ product, onClose, onEnquirySubmit }) => {
                     placeholder="Your email"
                     className={`w-full border px-3 py-2 rounded ${emailError ? 'border-red-500' : ''}`}
                   />
-                  {emailError && (
-                    <p className="text-red-500 text-sm mt-1">{emailError}</p>
-                  )}
+                  {emailError && <p className="text-red-500 text-xs">{emailError}</p>}
                 </div>
-
                 <div>
                   <input
-                    type="tel"
+                    type="text"
                     value={mobile}
                     onChange={(e) => setMobile(e.target.value)}
-                    placeholder="Your mobile"
+                    placeholder="Your mobile number"
                     className={`w-full border px-3 py-2 rounded ${mobileError ? 'border-red-500' : ''}`}
                   />
-                  {mobileError && (
-                    <p className="text-red-500 text-sm mt-1">{mobileError}</p>
-                  )}
+                  {mobileError && <p className="text-red-500 text-xs">{mobileError}</p>}
                 </div>
-
-                <div className="flex justify-end gap-3">
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                  >
-                    Send Enquiry
-                  </button>
-                </div>
+                <button
+                  type="submit"
+                  className="w-full py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                  disabled={loading}
+                >
+                  {loading ? "Sending..." : "Send Enquiry"}
+                </button>
               </form>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Loader Spinner */}
-      <style>{`
-        .loader {
-          border-top-color: #3498db;
-          animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-      `}</style>
     </>
   );
 };
