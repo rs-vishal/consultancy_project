@@ -34,7 +34,13 @@ const Login = () => {
       window.alert(res.data.message);
       console.log(res.data.message);
       localStorage.setItem("token","true");
+      if(formData.email=="ragavrunner33@gmail.com")
+      {
+        navigate("/admin");
+      }
+      else{
       navigate('/home');
+      }
     } catch (err) {
       console.error('Error in frontend login:', err);
       window.alert('Login failed. Please check your credentials.');
