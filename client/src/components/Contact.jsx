@@ -48,8 +48,8 @@ const Contact = () => {
 
     try {
       await emailjs.send(
-        "service_dfnjn8d", // ✅ Replace with your actual Service ID
-        "template_vwbpbi8", // ✅ Replace with your actual Template ID
+        "service_faea2jb", // ✅ Replace with your actual Service ID
+        "template_krj1j0n", // ✅ Replace with your actual Template ID
         templateParams,
         "dUDMhda0-3QM8nShA" // ✅ Replace with your actual Public Key
       );
