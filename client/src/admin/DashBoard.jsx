@@ -1,6 +1,7 @@
 import React ,{useState,useEffect} from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import axios from "axiosx"
+import axios from "axios"
+import re from "../assets/products.json"
 const productData = [
   { name: 'Rexnord Cooling Fan', sold: 	180 },
   { name: "Analog 11 Pin Electric Timer", sold: 150 },
@@ -23,21 +24,36 @@ const fetchContactMessages = async () => {
     return [];
   }
 };
+const prod =async()=>{
+  try {
+    const response =await re;
+    console.log("Response from JSON file:", response);
+    return response;
 
+  } catch (err) {
+  console.log("Error in fetchin gth product",err);
+  return [];
+  }
+}
 const Dashboard = () => {
   const [contactMessages, setContactMessages] = useState([]);
-
+const [items,setItems]=useState([]);
   useEffect(() => {
     const loadMessages = async () => {
       const data = await fetchContactMessages();
+      const item=await prod();
+      setItems(item);
       setContactMessages(data);
+     console.log("data",data);
+     console.log("items",item);
+
     };
     loadMessages();
   }, []);
 
   return (
     <div className="p-6 space-y-8 bg-gray-100 min-h-screen">
-      {/* Top Cards */}
+
       <div className="grid grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-xl shadow-md text-center">
           <h2 className="text-xl font-semibold text-gray-700">Total Clients Seen</h2>
@@ -53,7 +69,6 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Line Graph */}
       <div className="bg-white p-6 rounded-xl shadow-md">
         <h2 className="text-xl font-bold mb-4 text-gray-800">Products Sold Comparison</h2>
         <ResponsiveContainer width="100%" height={300}>
@@ -67,6 +82,30 @@ const Dashboard = () => {
           </LineChart>
         </ResponsiveContainer>
       </div>
+      <div className="w-full h-auto overflow-x-auto">
+        <h1 className="items-center justify-center text-3xl ">Products</h1>
+  <div className="flex gap-4 whitespace-nowrap p-4 ">
+    {items.map((item, index) => (
+      <div
+        key={index}
+        className="min-w-[300px] p-3 bg-white rounded shadow inline-block"
+      >
+        <img
+          src={item.images[0]}
+          alt={item.name}
+          className="w-full h-40 object-cover mb-2 rounded"
+        />
+        <h2 className="text-xl font-bold mb-2 text-gray-800">{item.name}</h2>
+        <p className="text-lg font-semibold text-gray-700">Price: {item.price}</p>
+        <p className="text-sm text-gray-600">Category: {item.category}</p>
+      </div>
+    ))}
+  </div>
+</div>
+
+
+
+
 
       {/* Contact Info Table */}
       <div className="bg-white p-6 rounded-xl shadow-md">
