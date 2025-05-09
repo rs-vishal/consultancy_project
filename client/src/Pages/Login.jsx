@@ -23,6 +23,20 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+    // Email validation
+    if (!emailRegex.test(formData.email)) {
+      window.alert('Please enter a valid email address (e.g., name@example.com).');
+      return;
+    }
+
+    // Password validation
+    if (!passwordRegex.test(formData.password)) {
+      window.alert('Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, and one number.');
+      return;
+    }
     setLoading(true);
 
     try {

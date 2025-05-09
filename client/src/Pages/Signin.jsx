@@ -24,6 +24,20 @@ const Signin = () => {
 
   const handleSignIN = async (e) => {
     e.preventDefault();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+  // Email validation
+  if (!emailRegex.test(formData.email)) {
+    window.alert('Please enter a valid email address (e.g., name@example.com).');
+    return;
+  }
+
+  // Password validation
+  if (!passwordRegex.test(formData.password)) {
+    window.alert('Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, and one number.');
+    return;
+  }
     try {
       const response = await axios.post("http://localhost:4000/api/signup", formData);
       console.log(response.data);
