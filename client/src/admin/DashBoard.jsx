@@ -17,7 +17,7 @@ const productData = [
 
 const fetchContactMessages = async () => {
   try {
-    const response = await axios.get("http://localhost:4000/api/contact");
+    const response = await axios.get("https://consultancy-project-server.onrender.com/api/contact");
     return response.data;
   } catch (error) {
     console.error("Error fetching contact messages:", error);

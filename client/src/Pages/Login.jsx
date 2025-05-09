@@ -40,7 +40,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post('http://localhost:4000/api/login', {
+      const res = await axios.post('https://consultancy-project-server.onrender.com/api/login', {
         email: formData.email,
         password: formData.password
       });

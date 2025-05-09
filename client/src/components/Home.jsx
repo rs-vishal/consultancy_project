@@ -77,7 +77,7 @@ const Home = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await fetch("http://localhost:4000/api/get_no_of_enquiry"); // Changed port to 4000
+        const res = await fetch("https://consultancy-project-server.onrender.com/api/get_no_of_enquiry"); // Changed port to 4000
         const data = await res.json();
         const formattedStats = data.reduce((acc, curr) => {
           acc[curr.category] = curr.count;

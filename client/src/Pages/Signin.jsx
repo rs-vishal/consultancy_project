@@ -39,7 +39,7 @@ const Signin = () => {
     return;
   }
     try {
-      const response = await axios.post("http://localhost:4000/api/signup", formData);
+      const response = await axios.post("https://consultancy-project-server.onrender.com/api/signup", formData);
       console.log(response.data);
       window.alert("User added successfully");
       setShowLogin(true); // Optionally go to login
